@@ -190,3 +190,4 @@ Write-Host ("FAIL: " + $script:FailCount) -ForegroundColor Red
 Write-Host ("SKIP: " + $script:SkipCount) -ForegroundColor DarkYellow
 
 if ($script:FailCount -eq 0) { exit 0 } else { exit 1 }
+

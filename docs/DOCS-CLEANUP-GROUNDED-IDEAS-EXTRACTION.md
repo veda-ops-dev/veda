@@ -1429,3 +1429,35 @@ They split into three different future paths:
   - treat `docs/VSCODE-EXTENSION-LIFECYCLE-UX.md` as blocked pending a current lifecycle truth surface
 
 ---
+
+## Hammer Doctrine Resolution Notes
+
+### Resolution summary
+
+A new active doctrine doc now exists at:
+- `docs/architecture/testing/hammer-doctrine.md`
+
+The hammer is explicitly defined as an invariants and integrity layer for live operational surfaces.
+It is not a generic code-quality theater surface.
+
+The SERP-disturbance hammer lane was also modularized so:
+- `scripts/hammer/hammer-sil22-24.ps1` remains the stable coordinator entrypoint
+- focused concerns now live under `scripts/hammer/serp-disturbances/`
+
+### Grounded ideas preserved
+- hammer purpose is to verify DB integrity, route-contract integrity, bounded ownership, project isolation, deterministic behavior, and read-only guarantees where required
+- route-level hammering should test real execution and invariants, not UI theater or generic helper vanity checks
+- exact contract checks are more valuable than vague field-presence checks
+- when a hammer file becomes too large, split it into focused modules and keep a thin coordinator
+
+### Ideas explicitly rejected
+- turning the hammer into a generic code-hardening or style-enforcement tool
+- using hammer work as permission to drift into UI or speculative feature testing
+- letting large hammer files grow indefinitely when modular structure would preserve clarity better
+
+### Active direction
+- use `docs/architecture/testing/hammer-doctrine.md` as the active reference for hammer purpose and limits
+- keep coordinator entrypoints stable where existing repo tooling already points at them
+- modularize oversized hammer lanes by concern without changing hammer mission
+
+---

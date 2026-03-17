@@ -296,3 +296,13 @@ The active authority surface for this lane remains:
 - use them as grounded input
 - create any future active successor doc under the proper operator-surface path using current naming rules
 - archive the old root docs only after the successor or split resolution is explicit
+
+## Testing / Hammer Notes
+
+### Active doctrine doc
+- `docs/architecture/testing/hammer-doctrine.md` — active shared-architecture testing doctrine for hammer purpose, scope boundaries, and maintenance rules
+
+### Current implementation note
+- `scripts/hammer/hammer-sil22-24.ps1` now remains a thin coordinator and composes focused modules under `scripts/hammer/serp-disturbances/`
+- this modularization is intentional maintenance work, not a change in hammer mission
+- hammer purpose remains invariant protection for live operational surfaces, especially DB integrity, route-contract integrity, read-only guarantees, and project isolation
