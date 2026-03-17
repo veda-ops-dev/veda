@@ -41,21 +41,27 @@ If a phase conflicts with these documents, the documents win and the phase must 
 
 ## Current Execution Anchor (Handoff State)
 
-The clean repo has already reached a validated checkpoint.
+The clean repo has now reached a validated full-hammer checkpoint aligned to post-Wave-2D VEDA truth.
 
 ### Latest validated state
 
 - `GET /api/projects` returns `200`
 - Prisma client, env, and DB connectivity are working
 - Hammer bootstrap works (`hammer_setup`)
-- `hammer_run_module` for `sil22-24` passed `15/15`
+- Full coordinator `scripts/api-hammer.ps1` passes with **0 FAIL**
+- Current full baseline:
+  - **PASS:** 637
+  - **FAIL:** 0
+  - **SKIP:** 14
 - Modular hammer structure is in place
 - SERP disturbances lane is hardened and validated
+- VEDA Brain routes are present and passing
+- Stale Wave 2D residue was removed from the active hammer gate
 
 ### Latest checkpoint commit
 
 ```text
-harden serp disturbances route and modularize hammer lane
+hammer alignment: remove stale Wave 2D surfaces (entities, audits, draft-artifacts, blueprint, quotable-blocks); enforce observability-only VEDA; clean Phase 0 baseline (637 PASS / 0 FAIL)
 ```
 
 This commit is already pushed to `origin/main`.
@@ -64,9 +70,10 @@ This commit is already pushed to `origin/main`.
 
 The system is no longer in recovery or setup mode.
 
-It is now in **incremental hardening and completion mode**.
+It is now in **validated execution mode**.
 
 Do not re-solve runtime setup unless new failures appear.
+Do not reintroduce removed Wave 2D surfaces just because old hammer files once tested them.
 
 All work should proceed from this checkpoint forward.
 
@@ -76,8 +83,8 @@ Runtime working. Prisma + DB working. Hammer working.
 
 ### Already implemented in clean repo
 
-#### Project Lifecycle
-- `src/app/api/projects/` — project CRUD, bootstrap, project-scoped headers
+#### Project Lifecycle / Thin Project Partitioning
+- `src/app/api/projects/` — project CRUD, project-scoped headers, thin partitioning surface
 
 #### Observatory Floor
 - `src/app/api/source-items/` — source item list + capture
@@ -118,18 +125,26 @@ Runtime working. Prisma + DB working. Hammer working.
 #### Content Graph
 - `src/app/api/content-graph/` — full CRUD (surfaces, sites, pages, topics, entities, page-topics, page-entities, internal-links, archetypes, schema-usage, project-diagnostics)
 
+#### VEDA Brain
+- `src/app/api/veda-brain/project-diagnostics/` — thin GET route over diagnostics library
+- `src/app/api/veda-brain/proposals/` — thin GET route over proposals library
+
 #### MCP
 - `mcp/server/src/` — MCP server (api-client, tools, tool-handlers, index)
 
 #### Hammer Suite
-- `scripts/api-hammer.ps1` — coordinator with 40+ registered modules
-- `scripts/hammer/` — all hammer modules (core, seo, sil2–sil11+briefing, feature-history, feature-volatility, domain-dominance, intent-drift, serp-similarity, change-classification, event-timeline, event-causality, dataforseo-ingest, realdata-fixtures, keyword-overview, page-command-center, sil16–sil22-24, content-graph-phase1, content-graph-intelligence, veda-brain-phase1, project-bootstrap, veda-brain-proposals, w5-persistence)
+- `scripts/api-hammer.ps1` — coordinator aligned to active VEDA surfaces
+- `scripts/hammer/` — hammer modules for active observability surfaces (seo, sil2–sil11+briefing, feature-history, feature-volatility, domain-dominance, intent-drift, serp-similarity, change-classification, event-timeline, event-causality, dataforseo-ingest, realdata-fixtures, keyword-overview, page-command-center, sil16–sil22-24, content-graph-phase1, content-graph-intelligence, veda-brain-phase1, project-bootstrap, veda-brain-proposals, w5-persistence)
 
-### Known gap in clean repo
+### Known cleanup resolution
 
-| Gap | Detail |
-| --- | --- |
-| `src/app/api/veda-brain/` routes | Library code exists in `src/lib/veda-brain/`. Route handlers for `project-diagnostics/` and `proposals/` are missing. Legacy repo has them at `src/app/api/veda-brain/`. |
+The following were removed from the active hammer gate because they are not valid post-Wave-2D VEDA surfaces:
+
+- `hammer-core.ps1` legacy entity / audits / draft-artifacts / promotion expectations
+- blueprint workflow tests from `hammer-project-bootstrap.ps1`
+- quotable-block tests from `hammer-seo.ps1`
+
+These were stale residue, not implementation gaps.
 
 ### Legacy repo: `C:\dev\veda` (reference only)
 
@@ -144,18 +159,20 @@ The legacy repo also contains `vscode-extension/`, `src/app/dashboard/`, `docs/a
 All phases must preserve:
 
 1. VEDA observability-only bounded domain ownership
-2. Wave 2D constraints — no editorial, draft, or publishing workflow
+2. Wave 2D constraints — no editorial, draft, blueprint, or publishing workflow
 3. Compute-on-read default — no background jobs, no caching layers
-4. Transactional mutation with co-located EventLog writes
+4. Transactional mutation with co-located EventLog writes where required
 5. Multi-project isolation at both application and DB trigger layers
 6. Deterministic ordering with explicit tie-breakers
 7. Pure library pattern for all SIL layers
 8. Thin route handlers — fetch data, call library, return response
 9. Hammer-first validation before any surface is considered complete
+10. Schema changes only when they satisfy the schema rules and can be explicitly justified
+11. Endpoint additions only when they satisfy the endpoint rules and can be explicitly justified
 
 No phase may:
 
-- Introduce new schema changes unless explicitly instructed
+- Introduce new schema changes unless explicitly justified against schema rules
 - Introduce new bounded systems
 - Move ownership across V Ecosystem boundaries
 - Reintroduce removed VEDA domains
@@ -169,7 +186,6 @@ successor docs first, fossils second
 
 ---
 
-
 ## Phase Status Tracking
 
 Each phase must carry a status.
@@ -181,16 +197,16 @@ Allowed values:
 - `complete`
 - `blocked`
 
-Initial state:
+Current state:
 
 | Phase | Status |
 |------|--------|
-| Phase 0 — Hammer Baseline Validation | active |
-| Phase 1 — VEDA Brain Route Reconstruction | pending |
-| Phase 2 — Observatory Floor Hammer Hardening | pending |
+| Phase 0 — Hammer Baseline Validation | complete |
+| Phase 1 — VEDA Brain Route Reconstruction | complete |
+| Phase 2 — Observatory Floor Hammer Hardening | active |
 | Phase 3 — MCP Tool Surface Alignment | pending |
 | Phase 4 — Ingestion Pipeline Validation | pending |
-| Phase 5 — Documentation Alignment | pending |
+| Phase 5 — Documentation Alignment | active |
 | Phase 6 — Operator Surface Foundation | pending |
 | Phase 7 — Legacy Decommission | pending |
 
@@ -226,46 +242,29 @@ Failure to update these documents results in reconstruction drift.
 
 ### Objective
 
-Confirm every carried-forward surface in the clean repo passes its hammer module. Establish the green baseline that all subsequent phases build on.
+Confirm every carried-forward active VEDA surface in the clean repo passes its hammer module. Establish the green baseline that all subsequent phases build on.
+
+### Status
+
+**Complete**
+
+### Outcome snapshot
+
+- Full coordinator run completes with **0 FAIL**
+- Baseline snapshot recorded:
+  - **PASS:** 637
+  - **FAIL:** 0
+  - **SKIP:** 14
+- Stale Wave 2D residue removed from the active hammer gate
+- Full hammer now reflects current VEDA truth instead of inherited mixed-era assumptions
 
 ### System Scope
 
-VEDA (all surfaces)
-
-### Surfaces / Lanes
-
-All existing API routes and library functions already present in the clean repo.
-
-### Source of Truth Docs
-
-- `docs/architecture/testing/hammer-doctrine.md`
-- `docs/SYSTEM-INVARIANTS.md`
-- `docs/architecture/architecture/api/api-contract-principles.md`
-
-### Implementation Targets
-
-No new code. This phase is validation-only.
-
-- Run full `scripts/api-hammer.ps1` against the clean repo
-- Identify any FAIL results
-- Triage failures into: carry-forward bug vs missing seed data vs test-environment issue
-
-### Hammer Validation
-
-- Run full coordinator: `.\scripts\api-hammer.ps1`
-- Every registered module must produce a result (PASS, FAIL, or SKIP)
-- Target: 0 FAIL across all modules
-- SKIP results are acceptable only for tests that depend on seed data not yet present
+VEDA (all active observability surfaces)
 
 ### Exit Criteria
 
-- Full hammer run completes with 0 FAIL
-- All SKIP results are documented with reason
-- Baseline PASS/SKIP/FAIL counts recorded as the Phase 0 snapshot
-
-### Legacy Replacement Mapping
-
-N/A — this phase validates existing carry-forward, not new implementation.
+Met.
 
 ---
 
@@ -273,51 +272,26 @@ N/A — this phase validates existing carry-forward, not new implementation.
 
 ### Objective
 
-Rebuild the missing `src/app/api/veda-brain/` route handlers. The pure library code already exists in `src/lib/veda-brain/`. This phase adds the thin API routes that expose those libraries.
+Rebuild the missing `src/app/api/veda-brain/` route handlers as thin read-only API surfaces over the existing pure libraries in `src/lib/veda-brain/`.
 
-### System Scope
+### Status
 
-VEDA
+**Complete**
 
-### Surfaces / Lanes
+### Outcome
 
-| Route | Purpose | Library anchor |
-| --- | --- | --- |
-| `GET /api/veda-brain/project-diagnostics` | Cross-graph diagnostic summary for a project | `src/lib/veda-brain/veda-brain-diagnostics.ts` |
-| `GET /api/veda-brain/proposals` | Actionable proposal generation from graph + search intelligence | `src/lib/veda-brain/proposals.ts` |
+Implemented:
+- `src/app/api/veda-brain/project-diagnostics/route.ts`
+- `src/app/api/veda-brain/proposals/route.ts`
 
-### Source of Truth Docs
-
-- `docs/architecture/architecture/veda/content-graph-model.md`
-- `docs/architecture/architecture/veda/search-intelligence-layer.md`
-- `docs/architecture/architecture/api/api-contract-principles.md`
-- `docs/architecture/architecture/api/validation-and-error-taxonomy.md`
-- `docs/SYSTEM-INVARIANTS.md`
-
-### Implementation Targets
-
-- `src/app/api/veda-brain/project-diagnostics/route.ts` — thin GET handler, resolves project scope, calls `veda-brain-diagnostics.ts`, returns contract-compliant response
-- `src/app/api/veda-brain/proposals/route.ts` — thin GET handler, resolves project scope, calls `proposals.ts`, returns contract-compliant response
-
-Pattern: read legacy route handlers from `C:\dev\veda\src\app\api\veda-brain\` as reference, but implement against current clean repo conventions.
-
-### Hammer Validation
-
-- `scripts/hammer/hammer-veda-brain-phase1.ps1` — must pass (already registered in coordinator)
-- `scripts/hammer/hammer-veda-brain-proposals.ps1` — must pass (already registered in coordinator)
-- If hammer modules reference routes that don't yet exist, route creation must satisfy those expectations
+Validated by:
+- `scripts/hammer/hammer-veda-brain-phase1.ps1`
+- `scripts/hammer/hammer-veda-brain-proposals.ps1`
+- full coordinator remains at 0 FAIL
 
 ### Exit Criteria
 
-- Both routes return 200 with valid project context
-- Both routes return appropriate error for missing/invalid project context
-- Both hammer modules pass (0 FAIL)
-- Routes are read-only — no EventLog writes, no mutation
-- Full coordinator re-run remains at 0 FAIL
-
-### Legacy Replacement Mapping
-
-Replaces: `C:\dev\veda\src\app\api\veda-brain\project-diagnostics\route.ts`, `C:\dev\veda\src\app\api\veda-brain\proposals\route.ts`
+Met.
 
 ---
 
@@ -325,7 +299,11 @@ Replaces: `C:\dev\veda\src\app\api\veda-brain\project-diagnostics\route.ts`, `C:
 
 ### Objective
 
-Expand hammer coverage for the observatory floor surfaces (source capture, event log, project lifecycle) to match the coverage depth of the SIL and content graph surfaces.
+Expand and clean hammer coverage for the observatory floor surfaces so the active gate fully reflects current VEDA observability truth and no longer carries entity-era or blueprint-era assumptions.
+
+### Status
+
+**Active**
 
 ### System Scope
 
@@ -333,11 +311,13 @@ VEDA
 
 ### Surfaces / Lanes
 
-- `GET /api/source-items` — list with project scope
-- `POST /api/source-items/capture` — capture with project scope, EventLog co-location
-- `GET /api/events` — event log read
-- `POST /api/projects` — project creation
-- `GET /api/projects` — project list
+- `GET /api/source-items`
+- `POST /api/source-items/capture`
+- `GET /api/events`
+- `POST /api/projects`
+- `GET /api/projects`
+- current project-context strictness tests
+- current observatory-floor mutation and read invariants
 
 ### Source of Truth Docs
 
@@ -348,31 +328,31 @@ VEDA
 - `docs/systems/veda/observatory/EVENT-VOCABULARY.md`
 - `docs/SYSTEM-INVARIANTS.md`
 - `docs/architecture/architecture/security/auth-and-actor-model.md`
+- `docs/architecture/testing/hammer-doctrine.md`
 
 ### Implementation Targets
 
-- Review existing `hammer-core.ps1` and `hammer-project-bootstrap.ps1` for coverage gaps
-- Add tests for: cross-project source-item non-disclosure, capture EventLog atomicity, event log deterministic ordering, project-scoped event log filtering, invalid capture rejection
-- New hammer module if needed: `hammer-source-capture.ps1`
+- Review remaining observatory-floor hammer coverage for gaps now that stale surfaces are removed
+- Add tests for: source-item cross-project non-disclosure, capture EventLog atomicity, event log deterministic ordering, project-scoped event filtering, invalid capture rejection
+- Resolve the current search-performance skip dependency on old `$entityId` seeding if that can be done without reintroducing removed surfaces
+- Introduce a new focused hammer module only if existing modules cannot support this cleanly
 
 ### Hammer Validation
 
-- `hammer-core.ps1` — extended or confirmed sufficient
-- `hammer-project-bootstrap.ps1` — extended or confirmed sufficient
-- New `hammer-source-capture.ps1` if gap warrants it
-- All modules registered in coordinator parse-check and run sections
+- Extend `hammer-project-bootstrap.ps1` only where project partitioning / context rules are the real concern
+- Add a focused observatory-floor hammer module if needed (for example `hammer-source-capture.ps1`)
+- Full coordinator must remain at 0 FAIL
 
 ### Exit Criteria
 
-- Source capture produces EventLog entry atomically (verified by hammer)
-- Cross-project source-item access returns 404 (verified by hammer)
-- Event log ordering is deterministic (verified by hammer)
-- Invalid capture payloads are rejected with correct error shape (verified by hammer)
-- Full coordinator: 0 FAIL
+- Observatory floor coverage is explicit and architecture-aligned
+- No active hammer module depends on removed Wave 2D surfaces
+- Source capture + event invariants are hammer-tested directly
+- Full coordinator remains at 0 FAIL
 
 ### Legacy Replacement Mapping
 
-Replaces confidence gap in observatory floor coverage from legacy. No new routes — hardening only.
+This phase removes residual confidence gaps rather than adding new observability boundaries.
 
 ---
 
@@ -381,6 +361,10 @@ Replaces confidence gap in observatory floor coverage from legacy. No new routes
 ### Objective
 
 Verify and update the MCP server tool surface to reflect all active API routes in the clean repo. Ensure MCP tools are HTTP-only with no direct DB access.
+
+### Status
+
+**Pending**
 
 ### System Scope
 
@@ -406,20 +390,19 @@ VEDA (MCP operator surface)
 2. Audit `tool-handlers.ts` — confirm all handlers call HTTP API routes only
 3. Add tool definitions for any active API surface not currently exposed via MCP
 4. Priority order for new tool coverage:
-   - VEDA brain diagnostics and proposals (once Phase 1 completes)
+   - VEDA brain diagnostics and proposals
    - Content graph project-diagnostics
    - Any SIL surfaces not already exposed
 5. Verify `api-client.ts` includes no Prisma imports or direct DB calls
 
 ### Hammer Validation
 
-- `scripts/hammer/hammer-provider-smoke.ps1` — if it exists, confirm it covers MCP tool smoke tests
-- If no MCP-specific hammer exists, create `hammer-mcp-smoke.ps1` that verifies MCP server starts and responds to tool listing
-- Manual verification: MCP tool list matches active API surface inventory
+- Use existing hammer-validated API routes as the truth surface
+- Add `hammer-mcp-smoke.ps1` only if a real MCP boundary needs its own validation surface
 
 ### Exit Criteria
 
-- Every active read-only API route has a corresponding MCP tool definition
+- Every active read-only API route that should be operator-exposed has a corresponding MCP tool definition
 - No MCP tool handler performs direct DB access
 - MCP server starts cleanly and lists all tools
 - Tool definitions match current API response contracts
@@ -436,6 +419,10 @@ Replaces: `C:\dev\veda\mcp\server\src\` — the clean repo MCP surface becomes t
 ### Objective
 
 Confirm the DataForSEO ingestion pipeline and fixture replay system work end-to-end in the clean repo. Validate that ingested data flows correctly through the SIL computation pipeline.
+
+### Status
+
+**Pending**
 
 ### System Scope
 
@@ -490,6 +477,10 @@ Replaces: `C:\dev\veda\src\app\api\seo\ingest\`, `C:\dev\veda\scripts\fixtures\`
 
 Ensure all active documentation in the clean repo reflects clean repo truth. Remove stale legacy references. Confirm doc paths referenced in this roadmap and in code comments resolve correctly.
 
+### Status
+
+**Active**
+
 ### System Scope
 
 VEDA (documentation layer, all bounded systems referenced)
@@ -506,20 +497,23 @@ VEDA (documentation layer, all bounded systems referenced)
 - `docs/architecture/V_ECOSYSTEM.md`
 - `docs/SYSTEM-INVARIANTS.md`
 
-### Implementation Targets
+### Immediate documentation updates required by current repo reality
+
+- Update roadmap phase status and current execution anchor to reflect:
+  - Phase 0 complete
+  - Phase 1 complete
+  - full hammer at 637 PASS / 0 FAIL / 14 SKIP
+  - stale Wave 2D hammer residue removed from the active gate
+- Update cleanup intelligence layer to record the hammer realignment and removal of stale blueprint / entity / draft-artifact / quotable-block enforcement from active VEDA validation
+
+### Remaining implementation targets
 
 1. Audit all doc references to file paths — confirm each referenced path exists in clean repo
 2. Resolve the duplicate `V_ECOSYSTEM.md` (exists at both `docs/architecture/V_ECOSYSTEM.md` and `docs/architecture/architecture/V_ECOSYSTEM.md`) — keep one canonical location
 3. Resolve nested `docs/architecture/architecture/` structure — flatten if warranted or document the nesting intent
 4. Review `DOCS-CLEANUP-TRACKER.md` for any open items
 5. Update `search-intelligence-layer.md` registry if any implementation anchors have shifted during carry-forward
-6. Verify `ROADMAP.md` (this document) doc path references remain valid
-
-### Hammer Validation
-
-No hammer module — documentation changes do not produce executable surfaces.
-
-Manual verification: every doc path referenced in this roadmap resolves to a real file in the clean repo.
+6. Verify `ROADMAP.md` doc path references remain valid
 
 ### Exit Criteria
 
@@ -540,6 +534,10 @@ Replaces: all documentation from `C:\dev\veda\docs\` — the clean repo docs bec
 ### Objective
 
 Establish the VS Code successor surface foundation following the existing successor roadmap. This phase corresponds to Phase 1 of `docs/ROADMAP.md` (VS Code Successor Surface Roadmap) but is sequenced here after the underlying VEDA surfaces are fully validated.
+
+### Status
+
+**Pending**
 
 ### System Scope
 
@@ -570,15 +568,13 @@ Per `docs/systems/operator-surfaces/vscode/phase-1-spec.md`:
 - Successor VS Code extension project structure (new, not legacy `vscode-extension/`)
 - Environment detection and base URL configuration
 - Project context resolution (header-based, matching API convention)
-- One bounded read surface (e.g., project-level volatility summary or SERP weather)
-- One focused diagnostic read surface (e.g., keyword-target diagnostic detail)
+- One bounded read surface (for example, project-level volatility summary or SERP weather)
+- One focused diagnostic read surface (for example, keyword-target diagnostic detail)
 - Thin HTTP client — no Prisma, no DB, no local analytics, no polling
 
-### Hammer Validation
+### Validation
 
-No direct hammer module — VS Code extension is an API consumer.
-
-Validation path: extension surfaces must consume the same API endpoints already validated by existing hammer modules. If the extension requires an API shape change, that change must be validated by hammer first.
+The extension remains an API consumer. Any required API changes must be justified against endpoint rules before being introduced.
 
 ### Exit Criteria
 
@@ -601,6 +597,10 @@ Replaces: `C:\dev\veda\vscode-extension\` — the successor surface replaces the
 ### Objective
 
 Archive the legacy repo. The clean repo becomes the sole operational repo. No further reference to `C:\dev\veda` is required for any active work.
+
+### Status
+
+**Pending**
 
 ### System Scope
 
@@ -629,12 +629,6 @@ All (operational boundary, not code)
 5. Rename clean repo path from `C:\dev\veda-ops-dev\veda` to `C:\dev\veda` if desired
 6. Update any deployment, CI, or hosting configuration to point to the sole repo
 
-### Hammer Validation
-
-- Final full coordinator run: `.\scripts\api-hammer.ps1`
-- 0 FAIL required
-- PASS count should meet or exceed Phase 0 baseline
-
 ### Exit Criteria
 
 - Legacy repo is archived and no longer referenced by any active workflow
@@ -652,35 +646,35 @@ This phase completes the replacement. The legacy repo `C:\dev\veda` at branch `f
 ## Phase Sequencing Summary
 
 ```text
-Phase 0  Hammer Baseline Validation
+Phase 0  Hammer Baseline Validation        [complete]
   │
   ▼
-Phase 1  VEDA Brain Route Reconstruction
+Phase 1  VEDA Brain Route Reconstruction   [complete]
   │
   ▼
-Phase 2  Observatory Floor Hammer Hardening
+Phase 2  Observatory Floor Hammer Hardening [active]
   │
   ▼
-Phase 3  MCP Tool Surface Alignment
+Phase 3  MCP Tool Surface Alignment        [pending]
   │
   ▼
-Phase 4  Ingestion Pipeline Validation
+Phase 4  Ingestion Pipeline Validation     [pending]
   │
   ▼
-Phase 5  Documentation Alignment
+Phase 5  Documentation Alignment           [active]
   │
   ▼
-Phase 6  Operator Surface Foundation
+Phase 6  Operator Surface Foundation       [pending]
   │
   ▼
-Phase 7  Legacy Decommission
+Phase 7  Legacy Decommission               [pending]
 ```
 
 Phases 0–4 are core VEDA observability work and must be sequential.
 
-Phase 5 (documentation) can run in parallel with Phases 3–4 if convenient.
+Phase 5 (documentation) can run in parallel with Phases 2–4 if convenient.
 
-Phase 6 (operator surface) depends on Phases 0–4 being complete.
+Phase 6 (operator surface) depends on Phases 0–4 being complete enough to provide stable bounded API surfaces.
 
 Phase 7 depends on all prior phases.
 
@@ -697,7 +691,7 @@ Every implementation phase follows the same pattern:
 4. full coordinator run (no regressions)
 ```
 
-This pattern has been validated through SIL-2 through SIL-24, content graph, and VEDA brain library implementations.
+This pattern has been validated through SIL-2 through SIL-24, content graph, VEDA brain, and hammer cleanup alignment.
 
 Do not deviate from this pattern unless explicitly instructed.
 
@@ -707,10 +701,11 @@ Do not deviate from this pattern unless explicitly instructed.
 
 This roadmap does not authorize:
 
-- Schema changes
-- New enum additions
+- Schema changes without satisfying the schema rules and producing a clear justification
+- New endpoints without satisfying the endpoint rules and producing a clear justification
+- New enum additions without real invariant need
 - New bounded systems
-- Reintroduction of removed VEDA domains (drafts, editorial, publishing, distribution)
+- Reintroduction of removed VEDA domains (drafts, editorial, publishing, blueprint, distribution)
 - Speculative feature growth beyond documented surfaces
 - Dashboard or web UI implementation
 - Background job infrastructure
@@ -741,11 +736,11 @@ This roadmap is a living execution guide.
 
 When a phase completes, update its status in this document.
 When a phase reveals unexpected work, add it as a sub-phase rather than expanding scope silently.
+When hammer truth changes because stale residue is removed or a new active surface is added, update the cleanup intelligence layer as well.
 
 The goal is a clean, validated, operationally independent repo.
 Not a perfect repo. Not a maximally featured repo.
 A working repo that no longer needs the legacy repo for anything.
-
 
 ---
 
@@ -772,4 +767,3 @@ eliminate dependency on C:\dev\veda
 ```
 
 When Phase 7 completes, the legacy repo must no longer be required for any operation.
-

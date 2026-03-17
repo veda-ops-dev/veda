@@ -41,6 +41,39 @@ Related working doc:
 
 ---
 
+## Current Reconstruction Update
+
+### Hammer realignment checkpoint
+
+The active hammer surface has now been realigned to post-Wave-2D VEDA truth.
+
+Completed changes:
+- `scripts/api-hammer.ps1` no longer registers or runs `hammer-core.ps1`
+- `scripts/hammer/hammer-project-bootstrap.ps1` no longer contains blueprint workflow expectations
+- `scripts/hammer/hammer-seo.ps1` no longer contains quotable-block expectations
+- stale entity / audits / draft-artifact / promotion / blueprint / quotable-block expectations are no longer part of the active VEDA gate
+- full coordinator baseline after alignment is now:
+  - **PASS:** 637
+  - **FAIL:** 0
+  - **SKIP:** 14
+
+Interpretation:
+- the hammer now reflects active VEDA observability truth instead of inherited mixed-era residue
+- blueprint workflow remains outside VEDA ownership and must not be reintroduced here
+- stale hammer expectations are now classified as resolved cleanup residue, not pending implementation gaps
+
+### Roadmap state update
+
+`docs/ROADMAP.md` has been updated to reflect:
+- Phase 0 complete
+- Phase 1 complete
+- Phase 2 active
+- Phase 5 active
+- current execution anchor updated to the 637 / 0 / 14 full-hammer checkpoint
+- stale Wave 2D residue removal recorded as a current-reality resolution
+
+---
+
 ## Successor Doc Naming Rule
 
 Only new or rewritten active docs should be renamed or normalized.
@@ -97,6 +130,7 @@ Do **not** spend time renaming archived legacy docs just to make the fossil shel
 - `docs/SYSTEM-INVARIANTS.md` — rewritten truth-layer doc
 - `docs/architecture/veda/SCHEMA-REFERENCE.md` — created as truth-layer doc
 - `docs/systems/veda/observatory/EVENT-VOCABULARY.md` — created as truth-layer doc
+- active hammer gate now aligned to Wave 2D bounded ownership
 
 ### Root archive wave acknowledged
 A major root-level archive wave already happened before the remaining subfolder pass.
@@ -255,47 +289,7 @@ A doc counts as "rewritten" only when one of these happens:
 
 Until then, it is only reviewed/classified — not finished.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## Root VS Code Rewrite-Later Plan
-
-This section records the deliberate rewrite plan for the remaining root VS Code docs that are still classified as **keep, rewrite later**.
-
-These docs remain useful, but they are **not** active operator-surface architecture truth.
-The active authority surface for this lane remains:
-- `docs/systems/operator-surfaces/overview.md`
-- `docs/systems/operator-surfaces/vscode/operator-gap-map.md`
-- `docs/systems/operator-surfaces/vscode/repo-native-workflow.md`
-- `docs/systems/operator-surfaces/vscode/phase-1-spec.md`
-- `docs/systems/operator-surfaces/vscode/roadmap.md`
-
-| Doc | Current role | Recommended future disposition | Blocking dependency | Notes |
-|---|---|---|---|---|
-| `docs/VSCODE-EXTENSION-SPEC.md` | legacy-reference planning input | **split salvage, then likely archive later** | none required for cleanup; optional future entry-surface note only if still needed | thin-client, environment, and degraded-mode ideas survive; entity explorer / publish queue / entity workflow sections are stale and should not be rewritten as an active root spec |
-| `docs/VSCODE-EXTENSION-LIFECYCLE-UX.md` | legacy-reference lifecycle UX input | **blocked rewrite**; do not rewrite until a current lifecycle truth surface exists | a deliberate current lifecycle truth doc must exist first | currently depends on `docs/archive/pre-wave2/veda-project-lifecycle-workflow.md`; if lifecycle truth later exists, either rewrite this into a bounded cross-system lifecycle presentation note or archive it |
-| `docs/First-run operator journey.md` | legacy-reference UX audit | **strongest rewrite candidate** | none for planning; should be written against the current successor spine | best future target is a small active successor doc under `docs/systems/operator-surfaces/vscode/` focused on first-run guidance, empty states, recovery paths, and cross-panel continuity |
-
-### Working rule
-- do **not** rewrite these in place casually
-- use them as grounded input
-- create any future active successor doc under the proper operator-surface path using current naming rules
-- archive the old root docs only after the successor or split resolution is explicit
+---
 
 ## Testing / Hammer Notes
 
@@ -306,3 +300,5 @@ The active authority surface for this lane remains:
 - `scripts/hammer/hammer-sil22-24.ps1` now remains a thin coordinator and composes focused modules under `scripts/hammer/serp-disturbances/`
 - this modularization is intentional maintenance work, not a change in hammer mission
 - hammer purpose remains invariant protection for live operational surfaces, especially DB integrity, route-contract integrity, read-only guarantees, and project isolation
+- active hammer gate now explicitly excludes stale Wave 2D residue (`hammer-core.ps1`, blueprint enforcement, quotable-blocks enforcement)
+- current full active baseline: **637 PASS / 0 FAIL / 14 SKIP**
