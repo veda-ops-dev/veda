@@ -1,4 +1,5 @@
-# hammer-seo.ps1 — search-performance, quotable-blocks, SIL-1, W5
+# hammer-seo.ps1 — search-performance, SIL-1, W5
+# Note: quotable-blocks section removed — QuotableBlock was removed from VEDA in Wave 2D.
 # Dot-sourced by api-hammer.ps1. Inherits all symbols from hammer-lib.ps1 + coordinator.
 
 Hammer-Section "SEO TESTS (SEARCH PERFORMANCE)"
@@ -21,21 +22,9 @@ if (-not $entityId) {
     Test-Endpoint "GET" "$Base/api/seo/search-performance?entityId=$entityId" 200 "GET search-performance entityId filter" $Headers
 }
 
-Hammer-Section "SEO TESTS (QUOTABLE BLOCKS)"
-
-if (-not $entityId) {
-    Write-Host "Skipping SEO quotable-blocks tests: no entities found" -ForegroundColor DarkYellow; Hammer-Record SKIP
-} else {
-    $qbRunId = (Get-Date).Ticks
-    $qbBody  = @{ entityId=$entityId; text="api-hammer quotable block $qbRunId with sufficient length for validation"; claimType="statistic"; sourceCitation="api-hammer-$qbRunId"; topicTag="test" }
-    Test-PostJson "$Base/api/quotable-blocks" 201 "POST quotable-blocks (valid)"           $Headers $qbBody
-    $badClaim = $qbBody.Clone(); $badClaim.claimType = "invalid"
-    Test-PostJson "$Base/api/quotable-blocks" 400 "POST quotable-blocks invalid claimType" $Headers $badClaim
-    if ($OtherHeaders.Count -gt 0) {
-        Test-PostJson "$Base/api/quotable-blocks" 404 "POST quotable-blocks cross-project entity" $OtherHeaders $qbBody
-    }
-    Test-ResponseEnvelope "$Base/api/quotable-blocks?limit=5" $Headers "GET quotable-blocks (list envelope)" $true
-}
+# SEO TESTS (QUOTABLE BLOCKS) removed.
+# QuotableBlock was intentionally removed from VEDA in Wave 2D.
+# Do not reintroduce this section.
 
 Hammer-Section "SIL-1 TESTS (KEYWORD TARGETS)"
 

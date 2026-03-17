@@ -14,7 +14,6 @@ param(
 $_parseTargets = @(
     $MyInvocation.MyCommand.Path
     "$PSScriptRoot\hammer\hammer-lib.ps1"
-    "$PSScriptRoot\hammer\hammer-core.ps1"
     "$PSScriptRoot\hammer\hammer-seo.ps1"
     "$PSScriptRoot\hammer\hammer-sil2.ps1"
     "$PSScriptRoot\hammer\hammer-sil3.ps1"
@@ -133,12 +132,12 @@ if ($OtherHeaders.Count -eq 0) {
     }
 }
 
-$_seed = Try-GetJson -Url "$Base/api/entities?limit=1" -RequestHeaders $Headers
+# $entityId is not seeded here — the /api/entities surface was removed in Wave 2D.
+# Modules that formerly depended on $entityId now either use project-scoped
+# observatory data or have been retired alongside hammer-core.ps1.
 $entityId = $null
-if ($_seed -and $_seed.data -and $_seed.data.Count -gt 0) { $entityId = $_seed.data[0].id }
 
 # ── Run modules ────────────────────────────────────────────────────────────────
-. "$PSScriptRoot\hammer\hammer-core.ps1"
 . "$PSScriptRoot\hammer\hammer-seo.ps1"
 . "$PSScriptRoot\hammer\hammer-sil2.ps1"
 . "$PSScriptRoot\hammer\hammer-sil3.ps1"
