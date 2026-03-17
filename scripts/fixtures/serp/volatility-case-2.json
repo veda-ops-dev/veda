@@ -1,0 +1,57 @@
+{
+  "query": "serp delta hammer 639081642820307572",
+  "locale": "en-US",
+  "device": "desktop",
+  "snapshots": [
+    {
+      "capturedAt": "2026-03-04T00:41:22.240Z",
+      "rawPayload": {
+        "results": [
+          {
+            "url": "https://example.com/page-a",
+            "rank": 1,
+            "title": "Page A"
+          },
+          {
+            "url": "https://example.com/page-b",
+            "rank": 2,
+            "title": "Page B"
+          },
+          {
+            "url": "https://example.com/page-c",
+            "rank": 3,
+            "title": "Page C"
+          }
+        ]
+      },
+      "aiOverviewStatus": "absent",
+      "aiOverviewText": null,
+      "source": "operator"
+    },
+    {
+      "capturedAt": "2026-03-04T00:51:22.367Z",
+      "rawPayload": {
+        "results": [
+          {
+            "url": "https://example.com/page-b",
+            "rank": 1,
+            "title": "Page B"
+          },
+          {
+            "url": "https://example.com/page-a",
+            "rank": 2,
+            "title": "Page A"
+          },
+          {
+            "url": "https://example.com/page-d",
+            "rank": 3,
+            "title": "Page D"
+          }
+        ]
+      },
+      "aiOverviewStatus": "present",
+      "aiOverviewText": null,
+      "source": "operator"
+    }
+  ]
+}

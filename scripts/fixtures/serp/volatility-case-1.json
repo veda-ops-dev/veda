@@ -1,0 +1,422 @@
+{
+  "query": "volatility hammer 639081642858483331",
+  "locale": "en-US",
+  "device": "desktop",
+  "snapshots": [
+    {
+      "capturedAt": "2026-03-04T00:31:26.312Z",
+      "rawPayload": {
+        "results": [
+          {
+            "url": "https://example.com/alpha",
+            "rank": 1,
+            "title": "Alpha"
+          },
+          {
+            "url": "https://example.com/beta",
+            "rank": 2,
+            "title": "Beta"
+          },
+          {
+            "url": "https://example.com/gamma",
+            "rank": 3,
+            "title": "Gamma"
+          }
+        ]
+      },
+      "aiOverviewStatus": "absent",
+      "aiOverviewText": null,
+      "source": "operator"
+    },
+    {
+      "capturedAt": "2026-03-04T00:41:26.643Z",
+      "rawPayload": {
+        "results": [
+          {
+            "url": "https://example.com/beta",
+            "rank": 1,
+            "title": "Beta"
+          },
+          {
+            "url": "https://example.com/gamma",
+            "rank": 2,
+            "title": "Gamma"
+          },
+          {
+            "url": "https://example.com/alpha",
+            "rank": 3,
+            "title": "Alpha"
+          }
+        ]
+      },
+      "aiOverviewStatus": "present",
+      "aiOverviewText": null,
+      "source": "operator"
+    },
+    {
+      "capturedAt": "2026-03-04T00:43:00.969Z",
+      "rawPayload": {
+        "results": [
+          {
+            "url": "https://example.com/alpha",
+            "rank": 3,
+            "title": "Alpha"
+          },
+          {
+            "url": "https://example.com/beta",
+            "rank": 4,
+            "title": "Beta"
+          }
+        ]
+      },
+      "aiOverviewStatus": "absent",
+      "aiOverviewText": null,
+      "source": "operator"
+    },
+    {
+      "capturedAt": "2026-03-04T00:43:30.819Z",
+      "rawPayload": {
+        "results": [
+          {
+            "url": "https://example.com/alpha",
+            "rank": 2,
+            "title": "Alpha"
+          },
+          {
+            "url": "https://example.com/beta",
+            "rank": 3,
+            "title": "Beta"
+          }
+        ]
+      },
+      "aiOverviewStatus": "present",
+      "aiOverviewText": null,
+      "source": "operator"
+    },
+    {
+      "capturedAt": "2026-03-04T00:44:00.703Z",
+      "rawPayload": {
+        "results": [
+          {
+            "url": "https://example.com/alpha",
+            "rank": 1,
+            "title": "Alpha"
+          },
+          {
+            "url": "https://example.com/beta",
+            "rank": 2,
+            "title": "Beta"
+          }
+        ]
+      },
+      "aiOverviewStatus": "absent",
+      "aiOverviewText": null,
+      "source": "operator"
+    },
+    {
+      "capturedAt": "2026-03-04T00:44:30.575Z",
+      "rawPayload": {
+        "results": [
+          {
+            "url": "https://example.com/alpha",
+            "rank": 5,
+            "title": "Alpha"
+          },
+          {
+            "url": "https://example.com/beta",
+            "rank": 4,
+            "title": "Beta"
+          }
+        ]
+      },
+      "aiOverviewStatus": "present",
+      "aiOverviewText": null,
+      "source": "operator"
+    },
+    {
+      "capturedAt": "2026-03-04T00:45:00.272Z",
+      "rawPayload": {
+        "results": [
+          {
+            "url": "https://example.com/alpha",
+            "rank": 4,
+            "title": "Alpha"
+          },
+          {
+            "url": "https://example.com/beta",
+            "rank": 3,
+            "title": "Beta"
+          }
+        ]
+      },
+      "aiOverviewStatus": "absent",
+      "aiOverviewText": null,
+      "source": "operator"
+    },
+    {
+      "capturedAt": "2026-03-04T00:45:29.996Z",
+      "rawPayload": {
+        "results": [
+          {
+            "url": "https://example.com/alpha",
+            "rank": 3,
+            "title": "Alpha"
+          },
+          {
+            "url": "https://example.com/beta",
+            "rank": 2,
+            "title": "Beta"
+          }
+        ]
+      },
+      "aiOverviewStatus": "present",
+      "aiOverviewText": null,
+      "source": "operator"
+    },
+    {
+      "capturedAt": "2026-03-04T00:45:59.749Z",
+      "rawPayload": {
+        "results": [
+          {
+            "url": "https://example.com/alpha",
+            "rank": 2,
+            "title": "Alpha"
+          },
+          {
+            "url": "https://example.com/beta",
+            "rank": 4,
+            "title": "Beta"
+          }
+        ]
+      },
+      "aiOverviewStatus": "absent",
+      "aiOverviewText": null,
+      "source": "operator"
+    },
+    {
+      "capturedAt": "2026-03-04T00:46:29.608Z",
+      "rawPayload": {
+        "results": [
+          {
+            "url": "https://example.com/alpha",
+            "rank": 1,
+            "title": "Alpha"
+          },
+          {
+            "url": "https://example.com/beta",
+            "rank": 3,
+            "title": "Beta"
+          }
+        ]
+      },
+      "aiOverviewStatus": "present",
+      "aiOverviewText": null,
+      "source": "operator"
+    },
+    {
+      "capturedAt": "2026-03-04T00:46:59.495Z",
+      "rawPayload": {
+        "results": [
+          {
+            "url": "https://example.com/alpha",
+            "rank": 5,
+            "title": "Alpha"
+          },
+          {
+            "url": "https://example.com/beta",
+            "rank": 2,
+            "title": "Beta"
+          }
+        ]
+      },
+      "aiOverviewStatus": "absent",
+      "aiOverviewText": null,
+      "source": "operator"
+    },
+    {
+      "capturedAt": "2026-03-04T00:47:29.374Z",
+      "rawPayload": {
+        "results": [
+          {
+            "url": "https://example.com/alpha",
+            "rank": 4,
+            "title": "Alpha"
+          },
+          {
+            "url": "https://example.com/beta",
+            "rank": 4,
+            "title": "Beta"
+          }
+        ]
+      },
+      "aiOverviewStatus": "present",
+      "aiOverviewText": null,
+      "source": "operator"
+    },
+    {
+      "capturedAt": "2026-03-04T00:47:59.269Z",
+      "rawPayload": {
+        "results": [
+          {
+            "url": "https://example.com/alpha",
+            "rank": 3,
+            "title": "Alpha"
+          },
+          {
+            "url": "https://example.com/beta",
+            "rank": 3,
+            "title": "Beta"
+          }
+        ]
+      },
+      "aiOverviewStatus": "absent",
+      "aiOverviewText": null,
+      "source": "operator"
+    },
+    {
+      "capturedAt": "2026-03-04T00:48:29.157Z",
+      "rawPayload": {
+        "results": [
+          {
+            "url": "https://example.com/alpha",
+            "rank": 2,
+            "title": "Alpha"
+          },
+          {
+            "url": "https://example.com/beta",
+            "rank": 2,
+            "title": "Beta"
+          }
+        ]
+      },
+      "aiOverviewStatus": "present",
+      "aiOverviewText": null,
+      "source": "operator"
+    },
+    {
+      "capturedAt": "2026-03-04T00:48:58.993Z",
+      "rawPayload": {
+        "results": [
+          {
+            "url": "https://example.com/alpha",
+            "rank": 1,
+            "title": "Alpha"
+          },
+          {
+            "url": "https://example.com/beta",
+            "rank": 4,
+            "title": "Beta"
+          }
+        ]
+      },
+      "aiOverviewStatus": "absent",
+      "aiOverviewText": null,
+      "source": "operator"
+    },
+    {
+      "capturedAt": "2026-03-04T00:49:28.834Z",
+      "rawPayload": {
+        "results": [
+          {
+            "url": "https://example.com/alpha",
+            "rank": 5,
+            "title": "Alpha"
+          },
+          {
+            "url": "https://example.com/beta",
+            "rank": 3,
+            "title": "Beta"
+          }
+        ]
+      },
+      "aiOverviewStatus": "present",
+      "aiOverviewText": null,
+      "source": "operator"
+    },
+    {
+      "capturedAt": "2026-03-04T00:49:58.639Z",
+      "rawPayload": {
+        "results": [
+          {
+            "url": "https://example.com/alpha",
+            "rank": 4,
+            "title": "Alpha"
+          },
+          {
+            "url": "https://example.com/beta",
+            "rank": 2,
+            "title": "Beta"
+          }
+        ]
+      },
+      "aiOverviewStatus": "absent",
+      "aiOverviewText": null,
+      "source": "operator"
+    },
+    {
+      "capturedAt": "2026-03-04T00:50:28.390Z",
+      "rawPayload": {
+        "results": [
+          {
+            "url": "https://example.com/alpha",
+            "rank": 3,
+            "title": "Alpha"
+          },
+          {
+            "url": "https://example.com/beta",
+            "rank": 4,
+            "title": "Beta"
+          }
+        ]
+      },
+      "aiOverviewStatus": "present",
+      "aiOverviewText": null,
+      "source": "operator"
+    },
+    {
+      "capturedAt": "2026-03-04T00:50:58.266Z",
+      "rawPayload": {
+        "results": [
+          {
+            "url": "https://example.com/alpha",
+            "rank": 2,
+            "title": "Alpha"
+          },
+          {
+            "url": "https://example.com/beta",
+            "rank": 3,
+            "title": "Beta"
+          }
+        ]
+      },
+      "aiOverviewStatus": "absent",
+      "aiOverviewText": null,
+      "source": "operator"
+    },
+    {
+      "capturedAt": "2026-03-04T00:51:26.887Z",
+      "rawPayload": {
+        "results": [
+          {
+            "url": "https://example.com/alpha",
+            "rank": 1,
+            "title": "Alpha"
+          },
+          {
+            "url": "https://example.com/gamma",
+            "rank": 2,
+            "title": "Gamma"
+          },
+          {
+            "url": "https://example.com/beta",
+            "rank": 3,
+            "title": "Beta"
+          }
+        ]
+      },
+      "aiOverviewStatus": "absent",
+      "aiOverviewText": null,
+      "source": "operator"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "sampleSize": 19,
+  "snapshotCount": 20,
+  "volatilityScore": 23.72,
+  "rankVolatilityComponent": 4.77,
+  "aiOverviewComponent": 18.95,
+  "featureVolatilityComponent": 0,
+  "volatilityRegime": "shifting",
+  "aiOverviewChurn": 18
+}

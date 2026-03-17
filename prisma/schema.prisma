@@ -1,0 +1,556 @@
+// VEDA Prisma Schema — Multi-Project Observatory
+//
+// VEDA is an observability system. This schema contains only observatory truth:
+//   entity + observation + time + interpretation
+//
+// Production/editorial models belong outside this repo's active VEDA schema.
+//
+// Content Graph models represent observed structural state of content surfaces,
+// not planning or execution workflow state.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
+}
+
+// =============================================================================
+// Enums — Observatory vocabularies
+// =============================================================================
+
+enum SourceType {
+  rss
+  webpage
+  comment
+  reply
+  video
+  other
+}
+
+enum Platform {
+  website
+  x
+  youtube
+  github
+  reddit
+  hackernews
+  substack
+  linkedin
+  discord
+  other
+}
+
+enum SourceItemStatus {
+  ingested
+  triaged
+  used
+  archived
+}
+
+enum CapturedBy {
+  human
+  llm
+  system
+}
+
+// EntityType — observatory-scoped model discriminator for EventLog
+enum EntityType {
+  sourceItem
+  sourceFeed
+  searchPerformance
+  keywordTarget
+  serpSnapshot
+  cgSurface
+  cgSite
+  cgPage
+  cgContentArchetype
+  cgTopic
+  cgEntity
+  cgInternalLink
+  cgSchemaUsage
+  cgPageTopic
+  cgPageEntity
+  vedaProject
+}
+
+// EventType — observatory-scoped audit events
+enum EventType {
+  SOURCE_CAPTURED
+  SOURCE_TRIAGED
+  SYSTEM_CONFIG_CHANGED
+  PROJECT_CREATED
+  KEYWORD_TARGET_CREATED
+  SERP_SNAPSHOT_RECORDED
+  CG_SURFACE_CREATED
+  CG_SITE_CREATED
+  CG_PAGE_CREATED
+  CG_ARCHETYPE_CREATED
+  CG_TOPIC_CREATED
+  CG_ENTITY_CREATED
+  CG_INTERNAL_LINK_CREATED
+  CG_SCHEMA_USAGE_CREATED
+  CG_PAGE_TOPIC_CREATED
+  CG_PAGE_ENTITY_CREATED
+}
+
+enum ActorType {
+  human
+  llm
+  system
+}
+
+enum ProjectLifecycleState {
+  created
+  bootstrapping
+  active
+  paused
+  archived
+}
+
+enum AiOverviewStatus {
+  present
+  absent
+  parse_error
+}
+
+// Content Graph enums
+enum CgSurfaceType {
+  website
+  wiki
+  blog
+  x
+  youtube
+}
+
+enum CgPublishingState {
+  draft
+  published
+  archived
+}
+
+enum CgPageRole {
+  primary
+  supporting
+  reviewed
+  compared
+  navigation
+}
+
+enum CgLinkRole {
+  hub
+  support
+  navigation
+}
+
+// =============================================================================
+// Project — Thin observatory scoping container
+// Every observatory record belongs to exactly one project unless intentionally global.
+// =============================================================================
+
+model Project {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name           String
+  slug           String   @unique
+  description    String?
+  lifecycleState ProjectLifecycleState @default(created)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Observatory reverse relations
+  sourceItems              SourceItem[]
+  sourceFeeds              SourceFeed[]
+  eventLogs                EventLog[]
+  keywordTargets           KeywordTarget[]
+  serpSnapshots            SERPSnapshot[]
+  searchPerformanceRecords SearchPerformance[]
+  // Content Graph
+  cgSurfaces               CgSurface[]
+  cgSites                  CgSite[]
+  cgPages                  CgPage[]
+  cgContentArchetypes      CgContentArchetype[]
+  cgTopics                 CgTopic[]
+  cgEntities               CgEntity[]
+  cgInternalLinks          CgInternalLink[]
+  cgSchemaUsages           CgSchemaUsage[]
+  cgPageTopics             CgPageTopic[]
+  cgPageEntities           CgPageEntity[]
+}
+
+// =============================================================================
+// Source & Capture — External signal observation
+// Uniqueness is project-scoped to preserve multi-project isolation.
+// =============================================================================
+
+model SourceItem {
+  id             String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sourceType     SourceType
+  platform       Platform         @default(other)
+  url            String
+  capturedAt     DateTime         @default(now())
+  capturedBy     CapturedBy       @default(human)
+  contentHash    String
+  snapshotRef    String?
+  snapshotMime   String?
+  snapshotBytes  Int?
+  operatorIntent String
+  notes          String?
+  status         SourceItemStatus @default(ingested)
+  archivedAt     DateTime?
+
+  sourceFeedId   String?          @db.Uuid
+  sourceFeed     SourceFeed?      @relation(fields: [sourceFeedId], references: [id], onDelete: SetNull)
+
+  projectId      String           @db.Uuid
+  project        Project          @relation(fields: [projectId], references: [id], onDelete: Restrict)
+
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@unique([projectId, url])
+  @@index([projectId, status, capturedAt])
+  @@index([sourceType, platform])
+}
+
+model SourceFeed {
+  id            String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name          String
+  feedUrl       String
+  platform      Platform
+  platformLabel String?
+  isActive      Boolean    @default(true)
+
+  projectId     String     @db.Uuid
+  project       Project    @relation(fields: [projectId], references: [id], onDelete: Restrict)
+
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  sourceItems   SourceItem[]
+
+  @@unique([projectId, feedUrl])
+  @@index([projectId])
+}
+
+// =============================================================================
+// Event Log — Append-only observatory audit trail
+// entityType always identifies the table that entityId references.
+// =============================================================================
+
+model EventLog {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  eventType  EventType
+  entityType EntityType
+  entityId   String    @db.Uuid
+  actor      ActorType
+  details    Json?
+
+  projectId  String    @db.Uuid
+  project    Project   @relation(fields: [projectId], references: [id], onDelete: Restrict)
+
+  timestamp  DateTime  @default(now())
+
+  @@index([projectId, timestamp, id])
+  @@index([entityType, entityId, timestamp])
+}
+
+// =============================================================================
+// Search Intelligence Layer — Observation Ledger
+// KeywordTarget: mutable governance record
+// SERPSnapshot: immutable observation (append-friendly SERP capture)
+// =============================================================================
+
+model KeywordTarget {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  projectId  String   @db.Uuid
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Restrict)
+
+  query      String
+  locale     String
+  device     String
+
+  isPrimary  Boolean  @default(false)
+
+  intent     String?
+  notes      String?
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([projectId, query, locale, device])
+  @@index([projectId])
+}
+
+model SERPSnapshot {
+  id                   String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  projectId            String   @db.Uuid
+  project              Project  @relation(fields: [projectId], references: [id], onDelete: Restrict)
+
+  query                String
+  locale               String
+  device               String
+
+  capturedAt           DateTime
+  validAt              DateTime?
+
+  rawPayload           Json
+  payloadSchemaVersion String?
+
+  aiOverviewStatus     AiOverviewStatus
+  aiOverviewText       String?
+
+  source               String
+  batchRef             String?
+
+  createdAt            DateTime @default(now())
+
+  @@unique([projectId, query, locale, device, capturedAt])
+  @@index([projectId, query, locale, device, capturedAt])
+  @@index([projectId])
+}
+
+// =============================================================================
+// Search Performance — GSC query × page × date-range observations
+// Pure URL-based observation. No planning or execution coupling.
+// =============================================================================
+
+model SearchPerformance {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  projectId   String    @db.Uuid
+  pageUrl     String
+  query       String
+  impressions Int
+  clicks      Int
+  ctr         Float
+  avgPosition Float
+  dateStart   DateTime
+  dateEnd     DateTime
+  capturedAt  DateTime  @default(now())
+
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Restrict)
+
+  @@unique([projectId, query, pageUrl, dateStart, dateEnd])
+  @@index([projectId, capturedAt])
+  @@index([projectId, pageUrl, dateStart])
+  @@index([projectId, query, dateStart])
+}
+
+// =============================================================================
+// System Config — Global observability configuration
+// Intentionally NOT project-scoped.
+// Per-project overrides use JSON value: { "default": N, "overrides": { "<projectId>": N } }
+// =============================================================================
+
+model SystemConfig {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  key       String    @unique
+  value     Json
+  updatedBy ActorType
+  updatedAt DateTime  @updatedAt
+}
+
+// =============================================================================
+// Content Graph — Structural observation of content surfaces
+// Intelligence is compute-on-read only. No materialized scores.
+// =============================================================================
+
+// CgSurface — A content surface where content exists
+// canonicalIdentifier: durable machine-readable platform identity
+// Uniqueness: (projectId, key) for operator identity;
+//             (projectId, type, canonicalIdentifier) for platform identity
+//             — partial unique index enforced via migration SQL
+model CgSurface {
+  id                  String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  projectId           String        @db.Uuid
+  project             Project       @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  type                CgSurfaceType
+  key                 String
+  label               String?
+  canonicalIdentifier String?
+  canonicalUrl        String?
+  enabled             Boolean       @default(true)
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  sites               CgSite[]
+
+  @@unique([projectId, key])
+  @@index([projectId, type])
+}
+
+// CgSite — A web property within a surface
+// DB integrity for projectId ↔ surface.projectId is enforced in migration SQL.
+model CgSite {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  projectId   String    @db.Uuid
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  surfaceId   String    @db.Uuid
+  surface     CgSurface @relation(fields: [surfaceId], references: [id], onDelete: Restrict)
+  domain      String
+  framework   String?
+  isCanonical Boolean   @default(true)
+  notes       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  pages       CgPage[]
+
+  @@unique([projectId, domain])
+  @@index([projectId, surfaceId])
+}
+
+// CgContentArchetype — Structural page type (guide, comparison, review, etc.)
+model CgContentArchetype {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  projectId String   @db.Uuid
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  key       String
+  label     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  pages     CgPage[]
+
+  @@unique([projectId, key])
+  @@index([projectId])
+}
+
+// CgPage — A canonical content unit on a site
+// DB integrity for projectId ↔ site.projectId and optional archetype.projectId
+// is enforced in migration SQL.
+model CgPage {
+  id                 String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  projectId          String              @db.Uuid
+  project            Project             @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  siteId             String              @db.Uuid
+  site               CgSite              @relation(fields: [siteId], references: [id], onDelete: Restrict)
+  contentArchetypeId String?             @db.Uuid
+  contentArchetype   CgContentArchetype? @relation(fields: [contentArchetypeId], references: [id], onDelete: SetNull)
+  url                String
+  title              String
+  canonicalUrl       String?
+  publishingState    CgPublishingState   @default(draft)
+  isIndexable        Boolean             @default(true)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+
+  pageTopics         CgPageTopic[]
+  pageEntities       CgPageEntity[]
+  outboundLinks      CgInternalLink[]    @relation("InternalLinkSource")
+  inboundLinks       CgInternalLink[]    @relation("InternalLinkTarget")
+  schemaUsages       CgSchemaUsage[]
+
+  @@unique([projectId, url])
+  @@index([projectId, siteId, publishingState])
+}
+
+// CgTopic — Conceptual territory cluster
+model CgTopic {
+  id        String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  projectId String      @db.Uuid
+  project   Project     @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  key       String
+  label     String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  pageTopics CgPageTopic[]
+
+  @@unique([projectId, key])
+  @@index([projectId])
+}
+
+// CgEntity — Real-world entity referenced by content
+model CgEntity {
+  id         String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  projectId  String         @db.Uuid
+  project    Project        @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  key        String
+  label      String
+  entityType String
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  pageEntities CgPageEntity[]
+
+  @@unique([projectId, key])
+  @@index([projectId, entityType])
+}
+
+// CgPageTopic — Junction: page ↔ topic
+// DB integrity for projectId ↔ page.projectId/topic.projectId is enforced in migration SQL.
+model CgPageTopic {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  projectId String     @db.Uuid
+  project   Project    @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  pageId    String     @db.Uuid
+  page      CgPage     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  topicId   String     @db.Uuid
+  topic     CgTopic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  role      CgPageRole @default(supporting)
+  createdAt DateTime   @default(now())
+
+  @@unique([pageId, topicId])
+  @@index([projectId, topicId])
+}
+
+// CgPageEntity — Junction: page ↔ entity
+// DB integrity for projectId ↔ page.projectId/entity.projectId is enforced in migration SQL.
+model CgPageEntity {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  projectId String     @db.Uuid
+  project   Project    @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  pageId    String     @db.Uuid
+  page      CgPage     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  entityId  String     @db.Uuid
+  entity    CgEntity   @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  role      CgPageRole @default(supporting)
+  createdAt DateTime   @default(now())
+
+  @@unique([pageId, entityId])
+  @@index([projectId, entityId])
+}
+
+// CgInternalLink — Structural link between two pages
+// DB integrity for projectId ↔ sourcePage.projectId/targetPage.projectId
+// is enforced in migration SQL.
+model CgInternalLink {
+  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  projectId    String     @db.Uuid
+  project      Project    @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  sourcePageId String     @db.Uuid
+  sourcePage   CgPage     @relation("InternalLinkSource", fields: [sourcePageId], references: [id], onDelete: Cascade)
+  targetPageId String     @db.Uuid
+  targetPage   CgPage     @relation("InternalLinkTarget", fields: [targetPageId], references: [id], onDelete: Cascade)
+  anchorText   String?
+  linkRole     CgLinkRole @default(support)
+  createdAt    DateTime   @default(now())
+
+  @@unique([sourcePageId, targetPageId])
+  @@index([projectId, sourcePageId])
+  @@index([projectId, targetPageId])
+}
+
+// CgSchemaUsage — Structured data used on a page
+// DB integrity for projectId ↔ page.projectId is enforced in migration SQL.
+model CgSchemaUsage {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  projectId  String   @db.Uuid
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  pageId     String   @db.Uuid
+  page       CgPage   @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  schemaType String
+  isPrimary  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@unique([pageId, schemaType])
+  @@index([projectId, schemaType])
+  @@index([projectId, pageId])
+}
+
+

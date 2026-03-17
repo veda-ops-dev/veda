@@ -1,0 +1,82 @@
+{
+  "query": "sil6-history 639081628375727660",
+  "locale": "en-US",
+  "device": "desktop",
+  "snapshots": [
+    {
+      "capturedAt": "2026-03-04T00:25:17.746Z",
+      "rawPayload": {
+        "results": [
+          {
+            "url": "https://ex.com/a1",
+            "rank": 1,
+            "title": "Title 1"
+          },
+          {
+            "url": "https://ex.com/a2",
+            "rank": 2,
+            "title": "Title 2"
+          },
+          {
+            "url": "https://ex.com/a3",
+            "rank": 3,
+            "title": "Title 3"
+          }
+        ]
+      },
+      "aiOverviewStatus": "absent",
+      "aiOverviewText": null,
+      "source": "operator"
+    },
+    {
+      "capturedAt": "2026-03-04T00:26:17.746Z",
+      "rawPayload": {
+        "results": [
+          {
+            "url": "https://ex.com/a1",
+            "rank": 1,
+            "title": "Title 1"
+          },
+          {
+            "url": "https://ex.com/b1",
+            "rank": 2,
+            "title": "Title 2"
+          },
+          {
+            "url": "https://ex.com/b2",
+            "rank": 3,
+            "title": "Title 3"
+          }
+        ]
+      },
+      "aiOverviewStatus": "present",
+      "aiOverviewText": null,
+      "source": "operator"
+    },
+    {
+      "capturedAt": "2026-03-04T00:27:17.746Z",
+      "rawPayload": {
+        "results": [
+          {
+            "url": "https://ex.com/c1",
+            "rank": 1,
+            "title": "Title 1"
+          },
+          {
+            "url": "https://ex.com/a1",
+            "rank": 2,
+            "title": "Title 2"
+          },
+          {
+            "url": "https://ex.com/c2",
+            "rank": 3,
+            "title": "Title 3"
+          }
+        ]
+      },
+      "aiOverviewStatus": "absent",
+      "aiOverviewText": null,
+      "source": "operator"
+    }
+  ]
+}

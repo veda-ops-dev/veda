@@ -1,0 +1,152 @@
+{
+  "name": "basic-volatility-fixture",
+  "description": "8 hand-crafted SERPSnapshots for 1 keyword producing 7 pairs. Rank shifts average ~4.5 positions, max 10. Two AI Overview flips (absent→present→absent→present). Designed for deterministic value-correctness testing of volatility math. Expected outcomes at bottom of this file.",
+  "keywordTargets": [
+    {
+      "query": "creatine benefits",
+      "locale": "en-US",
+      "device": "desktop",
+      "snapshots": [
+        {
+          "capturedAt": "2026-02-01T00:00:00.000Z",
+          "aiOverviewStatus": "absent",
+          "aiOverviewText": null,
+          "rawPayload": {
+            "results": [
+              { "url": "https://examine.com/supplements/creatine/",          "rank": 1, "title": "Creatine Benefits" },
+              { "url": "https://healthline.com/nutrition/10-benefits-of-creatine", "rank": 2, "title": "10 Benefits" },
+              { "url": "https://nih.gov/creatine-research",                  "rank": 3, "title": "NIH Creatine" },
+              { "url": "https://mayoclinic.org/creatine",                    "rank": 4, "title": "Mayo Clinic" },
+              { "url": "https://webmd.com/vitamins/ai/ingredientmono-873",   "rank": 5, "title": "WebMD Creatine" }
+            ]
+          }
+        },
+        {
+          "capturedAt": "2026-02-05T00:00:00.000Z",
+          "aiOverviewStatus": "present",
+          "aiOverviewText": "Creatine is a naturally occurring compound that helps supply energy to muscles.",
+          "rawPayload": {
+            "results": [
+              { "url": "https://examine.com/supplements/creatine/",          "rank": 1, "title": "Creatine Benefits" },
+              { "url": "https://nih.gov/creatine-research",                  "rank": 2, "title": "NIH Creatine" },
+              { "url": "https://healthline.com/nutrition/10-benefits-of-creatine", "rank": 3, "title": "10 Benefits" },
+              { "url": "https://mayoclinic.org/creatine",                    "rank": 5, "title": "Mayo Clinic" },
+              { "url": "https://webmd.com/vitamins/ai/ingredientmono-873",   "rank": 6, "title": "WebMD Creatine" }
+            ]
+          }
+        },
+        {
+          "capturedAt": "2026-02-09T00:00:00.000Z",
+          "aiOverviewStatus": "absent",
+          "aiOverviewText": null,
+          "rawPayload": {
+            "results": [
+              { "url": "https://examine.com/supplements/creatine/",          "rank": 1, "title": "Creatine Benefits" },
+              { "url": "https://healthline.com/nutrition/10-benefits-of-creatine", "rank": 2, "title": "10 Benefits" },
+              { "url": "https://nih.gov/creatine-research",                  "rank": 7, "title": "NIH Creatine" },
+              { "url": "https://mayoclinic.org/creatine",                    "rank": 4, "title": "Mayo Clinic" },
+              { "url": "https://webmd.com/vitamins/ai/ingredientmono-873",   "rank": 5, "title": "WebMD Creatine" }
+            ]
+          }
+        },
+        {
+          "capturedAt": "2026-02-13T00:00:00.000Z",
+          "aiOverviewStatus": "absent",
+          "aiOverviewText": null,
+          "rawPayload": {
+            "results": [
+              { "url": "https://examine.com/supplements/creatine/",          "rank": 1, "title": "Creatine Benefits" },
+              { "url": "https://healthline.com/nutrition/10-benefits-of-creatine", "rank": 2, "title": "10 Benefits" },
+              { "url": "https://nih.gov/creatine-research",                  "rank": 3, "title": "NIH Creatine" },
+              { "url": "https://mayoclinic.org/creatine",                    "rank": 4, "title": "Mayo Clinic" },
+              { "url": "https://webmd.com/vitamins/ai/ingredientmono-873",   "rank": 5, "title": "WebMD Creatine" }
+            ]
+          }
+        },
+        {
+          "capturedAt": "2026-02-17T00:00:00.000Z",
+          "aiOverviewStatus": "absent",
+          "aiOverviewText": null,
+          "rawPayload": {
+            "results": [
+              { "url": "https://examine.com/supplements/creatine/",          "rank": 1, "title": "Creatine Benefits" },
+              { "url": "https://healthline.com/nutrition/10-benefits-of-creatine", "rank": 3, "title": "10 Benefits" },
+              { "url": "https://nih.gov/creatine-research",                  "rank": 2, "title": "NIH Creatine" },
+              { "url": "https://mayoclinic.org/creatine",                    "rank": 6, "title": "Mayo Clinic" },
+              { "url": "https://webmd.com/vitamins/ai/ingredientmono-873",   "rank": 4, "title": "WebMD Creatine" }
+            ]
+          }
+        },
+        {
+          "capturedAt": "2026-02-21T00:00:00.000Z",
+          "aiOverviewStatus": "present",
+          "aiOverviewText": "Creatine supplementation can increase phosphocreatine stores in muscles.",
+          "rawPayload": {
+            "results": [
+              { "url": "https://examine.com/supplements/creatine/",          "rank": 2, "title": "Creatine Benefits" },
+              { "url": "https://healthline.com/nutrition/10-benefits-of-creatine", "rank": 3, "title": "10 Benefits" },
+              { "url": "https://nih.gov/creatine-research",                  "rank": 1, "title": "NIH Creatine" },
+              { "url": "https://mayoclinic.org/creatine",                    "rank": 5, "title": "Mayo Clinic" },
+              { "url": "https://webmd.com/vitamins/ai/ingredientmono-873",   "rank": 4, "title": "WebMD Creatine" }
+            ]
+          }
+        },
+        {
+          "capturedAt": "2026-02-25T00:00:00.000Z",
+          "aiOverviewStatus": "present",
+          "aiOverviewText": "Creatine is one of the most well-researched sports supplements.",
+          "rawPayload": {
+            "results": [
+              { "url": "https://examine.com/supplements/creatine/",          "rank": 1, "title": "Creatine Benefits" },
+              { "url": "https://healthline.com/nutrition/10-benefits-of-creatine", "rank": 2, "title": "10 Benefits" },
+              { "url": "https://nih.gov/creatine-research",                  "rank": 3, "title": "NIH Creatine" },
+              { "url": "https://mayoclinic.org/creatine",                    "rank": 4, "title": "Mayo Clinic" },
+              { "url": "https://webmd.com/vitamins/ai/ingredientmono-873",   "rank": 10, "title": "WebMD Creatine" }
+            ]
+          }
+        },
+        {
+          "capturedAt": "2026-03-01T00:00:00.000Z",
+          "aiOverviewStatus": "present",
+          "aiOverviewText": "Creatine is one of the most well-researched sports supplements.",
+          "rawPayload": {
+            "results": [
+              { "url": "https://examine.com/supplements/creatine/",          "rank": 1, "title": "Creatine Benefits" },
+              { "url": "https://healthline.com/nutrition/10-benefits-of-creatine", "rank": 2, "title": "10 Benefits" },
+              { "url": "https://nih.gov/creatine-research",                  "rank": 3, "title": "NIH Creatine" },
+              { "url": "https://mayoclinic.org/creatine",                    "rank": 4, "title": "Mayo Clinic" },
+              { "url": "https://webmd.com/vitamins/ai/ingredientmono-873",   "rank": 5, "title": "WebMD Creatine" }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "_expectedOutcomes": {
+    "_note": "Pre-computed expected values. Hammer asserts these within tolerance.",
+    "sampleSize": 7,
+    "maturity": "developing",
+    "aiOverviewChurn": 2,
+    "aiChurnFlips": [
+      "pair 0-1: absent→present (flip)",
+      "pair 1-2: present→absent (flip)",
+      "pair 2-3: no flip",
+      "pair 3-4: no flip",
+      "pair 4-5: absent→present (flip)",
+      "pair 5-6: no flip",
+      "pair 6-7: no flip"
+    ],
+    "_aiChurnCorrectedCount": 3,
+    "_note2": "Pair deltas for rank shifts (only URLs in BOTH snapshots, non-null ranks):",
+    "_pair01": "examine:0, healthline:1, nih:1, mayoclinic:1, webmd:1 → avg=0.8 max=1",
+    "_pair12": "examine:0, healthline:1, nih:5, mayoclinic:1, webmd:1 → avg=1.6 max=5",
+    "_pair23": "examine:0, healthline:0, nih:4, mayoclinic:0, webmd:0 → avg=0.8 max=4",
+    "_pair34": "examine:0, healthline:1, nih:1, mayoclinic:2, webmd:1 → avg=1.0 max=2",
+    "_pair45": "examine:1, healthline:0, nih:1, mayoclinic:1, webmd:0 → avg=0.6 max=1",
+    "_pair56": "examine:1, healthline:1, nih:2, mayoclinic:1, webmd:6 → avg=2.2 max=6",
+    "_pair67": "examine:0, healthline:0, nih:0, mayoclinic:0, webmd:5 → avg=1.0 max=5",
+    "volatilityScoreRange": [0, 30],
+    "volatilityRegime": "calm_or_shifting",
+    "componentSumToleranceMax": 0.02
+  }
+}

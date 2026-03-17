@@ -1,0 +1,14 @@
+carry-forward stage generated from C:\dev\veda
+
+source branch: feature/veda-command-center
+source commit: 31a8deb
+
+do not carry forward:
+- src/app/dashboard/
+- vscode-extension/
+- docs/archive/
+- docs/specs/deferred/
+- docs/specs/future-ideas/
+- VEDA_MASTER_SYNC_PROMPT_UPDATED.txt
+- prompt files
+- stale editorial / cms / draft / reply workflow surfaces
