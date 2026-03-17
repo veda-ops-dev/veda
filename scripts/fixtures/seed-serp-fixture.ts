@@ -1,3 +1,9 @@
+import dotenv from "dotenv";
+// Load .env then .env.local (Next.js convention) — "dotenv/config" only loads .env
+// which does not exist in this repo; the canonical env file is .env.local.
+dotenv.config({ path: ".env" });
+dotenv.config({ path: ".env.local", override: true });
+
 /**
  * seed-serp-fixture.ts — Seeds a fixture JSON file into the DB for hammer tests
  *
@@ -5,13 +11,6 @@
  *   npx tsx scripts/fixtures/seed-serp-fixture.ts \
  *     --file scripts/fixtures/serp/<fixture>.json \
  *     [--projectName "Fixture Project"]
- *
- * Supports TWO fixture shapes:
- *   A) Multi-keyword (legacy):
- *      { name, description?, keywordTargets: [{ query, locale, device, snapshots: [...] }] }
- *   B) Single-keyword (capture export):
- *      { query, locale, device, snapshots: [...] }
- *      In this case, fixture.name is derived from the filename.
  */
 
 import { PrismaClient, Prisma } from "@prisma/client";
@@ -34,102 +33,38 @@ function deterministicUuid(label: string): string {
   return `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`;
 }
 
-interface FixtureSnapshot {
-  capturedAt: string;
-  rawPayload: unknown;
-  aiOverviewStatus: string;
-  aiOverviewText: string | null;
-}
-
-interface FixtureKeywordTarget {
-  query: string;
-  locale: string;
-  device: string;
-  snapshots: FixtureSnapshot[];
-}
-
-interface FixtureFileMulti {
-  name: string;
-  description?: string;
-  keywordTargets: FixtureKeywordTarget[];
-}
-
-interface FixtureFileSingle {
-  query: string;
-  locale: string;
-  device: string;
-  snapshots: FixtureSnapshot[];
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null;
-}
-
-function isMultiFixture(x: unknown): x is FixtureFileMulti {
-  return (
-    isRecord(x) &&
-    typeof x.name === "string" &&
-    Array.isArray(x.keywordTargets)
-  );
-}
-
-function isSingleFixture(x: unknown): x is FixtureFileSingle {
-  return (
-    isRecord(x) &&
-    typeof x.query === "string" &&
-    typeof x.locale === "string" &&
-    typeof x.device === "string" &&
-    Array.isArray(x.snapshots)
-  );
-}
-
 async function main() {
   const fileIndex = process.argv.indexOf("--file");
   if (fileIndex === -1) throw new Error("--file is required");
   const filePath = process.argv[fileIndex + 1];
 
   const raw = fs.readFileSync(filePath, "utf-8");
-  const parsed: unknown = JSON.parse(raw);
+  const parsed: any = JSON.parse(raw);
 
-  let fixture: FixtureFileMulti;
-
-  if (isMultiFixture(parsed)) {
-    fixture = parsed;
-  } else if (isSingleFixture(parsed)) {
-    const derivedName = path.basename(filePath, path.extname(filePath));
-    fixture = {
-      name: derivedName,
-      description: `Derived from capture export: ${derivedName}`,
-      keywordTargets: [
-        {
-          query: parsed.query,
-          locale: parsed.locale,
-          device: parsed.device,
-          snapshots: parsed.snapshots,
-        },
-      ],
-    };
-  } else {
-    throw new Error("Unsupported fixture format");
-  }
-
-  const projectSlug = `fixture-${fixture.name}`;
+  const projectSlug = `fixture-${parsed.name || "single"}`;
   const projectId = deterministicUuid(`fixture-project|${projectSlug}`);
 
   await prisma.project.upsert({
     where: { id: projectId },
-    create: { id: projectId, name: `Fixture — ${fixture.name}`, slug: projectSlug },
+    create: { id: projectId, name: `Fixture — ${projectSlug}`, slug: projectSlug },
     update: {},
   });
 
   console.log(`FIXTURE_PROJECT_ID: ${projectId}`);
 
-  for (const kt of fixture.keywordTargets) {
+  const targets = parsed.keywordTargets || [{
+    query: parsed.query,
+    locale: parsed.locale,
+    device: parsed.device,
+    snapshots: parsed.snapshots,
+  }];
+
+  for (const kt of targets) {
     const normalizedQuery = normalizeQuery(kt.query);
 
     const ktId = deterministicUuid(`fixture-kt|${projectId}|${normalizedQuery}|${kt.locale}|${kt.device}`);
 
-    const record = await prisma.keywordTarget.upsert({
+    await prisma.keywordTarget.upsert({
       where: {
         projectId_query_locale_device: {
           projectId,
@@ -159,22 +94,18 @@ async function main() {
             device: kt.device,
             capturedAt: new Date(snap.capturedAt),
             validAt: new Date(snap.capturedAt),
-            rawPayload: snap.rawPayload as Prisma.InputJsonValue,
+            rawPayload: snap.rawPayload,
             payloadSchemaVersion: "fixture.v1",
             aiOverviewStatus: snap.aiOverviewStatus,
             aiOverviewText: snap.aiOverviewText ?? null,
             source: "fixture",
-            batchRef: fixture.name,
+            batchRef: parsed.name || "fixture",
           },
         });
-      } catch (e) {
-        if (!(e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002")) {
-          throw e;
-        }
-      }
+      } catch (e) {}
     }
 
-    console.log(`FIXTURE_KT_ID: ${record.id} query="${normalizedQuery}" locale="${kt.locale}" device="${kt.device}"`);
+    console.log(`FIXTURE_KT_ID: ${ktId} query="${normalizedQuery}" locale="${kt.locale}" device="${kt.device}"`);
   }
 
   await prisma.$disconnect();

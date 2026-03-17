@@ -183,6 +183,12 @@ Test-Endpoint "GET" (Build-Url "/api/seo/serp-snapshots" @{from="badvalue"})    
 Test-Endpoint "GET" (Build-Url "/api/seo/serp-snapshots" @{from="2025-01-01"}) 400 "GET serp-snapshots from=date-only (no TZ) -> 400"  $Headers
 Test-Endpoint "GET" (Build-Url "/api/seo/serp-snapshots" @{includePayload="1"})   400 "GET serp-snapshots includePayload=1 -> 400"      $Headers
 Test-Endpoint "GET" (Build-Url "/api/seo/serp-snapshots" @{includePayload="yes"}) 400 "GET serp-snapshots includePayload=yes -> 400"    $Headers
+# Bypass Build-Url for whitespace-only values — Build-QueryString trims and silently
+# drops them, so the param never reaches the server.  Pre-encode spaces directly.
+Test-Endpoint "GET" "$Base/api/seo/serp-snapshots?query=%20%20%20"  400 "GET serp-snapshots query=spaces -> 400"  $Headers
+Test-Endpoint "GET" "$Base/api/seo/serp-snapshots?locale=%20%20%20" 400 "GET serp-snapshots locale=spaces -> 400" $Headers
+Test-Endpoint "GET" (Build-Url "/api/seo/serp-snapshots" @{wat="lol"})            400 "GET serp-snapshots unknown param -> 400"        $Headers
+Test-Endpoint "GET" (Build-Url "/api/seo/serp-snapshots" @{from="2025-12-31T00:00:00Z";to="2025-01-01T00:00:00Z"}) 400 "GET serp-snapshots from>to -> 400" $Headers
 
 try {
     Write-Host "Testing: GET serp-snapshots ordering deterministic (capturedAt desc, id tiebreak)" -NoNewline
@@ -214,6 +220,17 @@ if (-not $ssResult.ok) {
             }
             if ($allMatch -and $containsOurs) { Write-Host "  PASS" -ForegroundColor Green; Hammer-Record PASS }
             else { Write-Host "  FAIL (filter returned non-matching items or did not include our snapshot)" -ForegroundColor Red; Hammer-Record FAIL }
+if ($OtherHeaders.Count -gt 0) {
+    try {
+        Write-Host "Testing: GET serp-snapshots cross-project isolation -> no leakage" -NoNewline
+        $resp = Invoke-WebRequest -Uri (Build-Url "/api/seo/serp-snapshots" @{query=$ssNormalizedQuery;limit="20"}) -Method GET -Headers $OtherHeaders -SkipHttpErrorCheck -TimeoutSec 30 -UseBasicParsing
+        if ($resp.StatusCode -eq 200) {
+            $p = $resp.Content | ConvertFrom-Json; $leaked = $false
+            foreach ($item in $p.data) { if ($item.query -eq $ssNormalizedQuery) { $leaked = $true; break } }
+            if (-not $leaked) { Write-Host "  PASS" -ForegroundColor Green; Hammer-Record PASS } else { Write-Host "  FAIL (leak detected)" -ForegroundColor Red; Hammer-Record FAIL }
+        } else { Write-Host ("  FAIL (got " + $resp.StatusCode + ", expected 200)") -ForegroundColor Red; Hammer-Record FAIL }
+    } catch { Write-Host ("  FAIL (exception: " + $_.Exception.Message + ")") -ForegroundColor Red; Hammer-Record FAIL }
+}
         } else { Write-Host ("  FAIL (got " + $resp.StatusCode + ", expected 200)") -ForegroundColor Red; Hammer-Record FAIL }
     } catch { Write-Host ("  FAIL (exception: " + $_.Exception.Message + ")") -ForegroundColor Red; Hammer-Record FAIL }
 }
