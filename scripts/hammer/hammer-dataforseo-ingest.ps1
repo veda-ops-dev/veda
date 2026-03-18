@@ -14,11 +14,13 @@
 #   { mode, createdCount, skippedCount, errorCount, results[] }
 #
 # Fixture dependency:
-#   $s3KtId  -- a valid KeywordTarget ID in the main project (set by coordinator via SIL-3 fixture)
+#   $s3KtId  -- a valid KeywordTarget ID in the main project.
+#              Pre-set by coordinator via SIL-3 fixture, or self-bootstrapped below.
 #
 # Strategy:
+#   If $s3KtId is not already set (e.g. standalone run), the module creates its own
+#   KeywordTarget via POST /api/seo/keyword-research before running tests.
 #   All confirm=true tests use $s3KtId when available.
-#   Tests that require writes are marked to run only when $s3KtId is set.
 #   Cross-project test uses $OtherHeaders.
 
 Hammer-Section "DATAFORSEO INGEST BRIDGE TESTS"
@@ -32,6 +34,34 @@ function Invoke-Ingest {
     return Invoke-WebRequest -Uri "$Base$ingestBase" `
         -Method POST -Headers $RequestHeaders -Body $json `
         -ContentType "application/json" -SkipHttpErrorCheck -TimeoutSec 60 -UseBasicParsing
+}
+
+# ── Setup: ensure $s3KtId is available (self-contained bootstrap) ─────────────
+# When run via the coordinator, SIL-3 sets $s3KtId before this module runs.
+# When run in isolation or if SIL-3 setup failed, bootstrap our own KeywordTarget.
+if ([string]::IsNullOrWhiteSpace($s3KtId)) {
+    $_ingestRunId = (Get-Date).Ticks
+    $_ingestQuery = "ingest-hammer-$_ingestRunId"
+    try {
+        Write-Host "Testing: INGEST-SETUP create KeywordTarget (s3KtId not pre-set)" -NoNewline
+        $resp = Invoke-WebRequest -Uri "$Base/api/seo/keyword-research" -Method POST -Headers $Headers `
+            -Body (@{keywords=@($_ingestQuery);locale="en-US";device="desktop";confirm=$true} | ConvertTo-Json -Depth 5 -Compress) `
+            -ContentType "application/json" -SkipHttpErrorCheck -TimeoutSec 30 -UseBasicParsing
+        if ($resp.StatusCode -eq 201) {
+            $s3KtId = (($resp.Content | ConvertFrom-Json).data.targets |
+                Where-Object { $_.query -eq $_ingestQuery } | Select-Object -First 1).id
+            if ([string]::IsNullOrWhiteSpace($s3KtId) -or $s3KtId -notmatch '^[0-9a-fA-F-]{36}$') { $s3KtId = $null }
+            if ($s3KtId) {
+                Write-Host ("  PASS (s3KtId=" + $s3KtId + ")") -ForegroundColor Green; Hammer-Record PASS
+            } else {
+                Write-Host "  FAIL (keyword-research 201 but could not extract target ID)" -ForegroundColor Red; Hammer-Record FAIL
+            }
+        } else {
+            Write-Host ("  FAIL (keyword-research returned " + $resp.StatusCode + ", expected 201)") -ForegroundColor Red; Hammer-Record FAIL
+        }
+    } catch {
+        Write-Host ("  FAIL (exception: " + $_.Exception.Message + ")") -ForegroundColor Red; Hammer-Record FAIL
+    }
 }
 
 # ── INGEST-A: preview mode returns 200 ───────────────────────────────────────

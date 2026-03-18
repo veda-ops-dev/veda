@@ -1494,3 +1494,86 @@ Completed outcomes:
 - continue Phase 2 tightening only where observability invariants can be strengthened without schema or endpoint drift
 - preserve the rule that hammer changes must improve truthfulness, not just total PASS count
 
+
+
+---
+
+## Roadmap Status Reconciliation Notes
+
+### Resolution summary
+
+docs/ROADMAP.md had drifted behind repo reality by continuing to mark Phase 3 — MCP Tool Surface Alignment as pending after the MCP audit/documentation lane had already completed in practice.
+
+The reconciliation basis is the clean-repo commit trail:
+- ab4a622 — document MCP as current Claude Desktop-compatible dev harness
+- 2a90e81 — audit and document mcp tool surface
+
+### Grounded ideas preserved
+- roadmap phase state must follow validated repo reality, not stale earlier status text
+- MCP completion here means audited API-only bounded operator-surface alignment, not permission to keep expanding MCP by inertia
+- once roadmap status drift is corrected, the next execution lane remains Phase 4 — Ingestion Pipeline Validation
+
+### Ideas explicitly rejected
+- pretending Phase 3 is still pending after the audit/documentation pass already landed
+- using stale roadmap text as an excuse to reopen MCP expansion without a new bounded need
+- treating status reconciliation as justification for new schema, routes, or ownership drift
+
+### Active direction
+- treat Phase 3 as complete
+- keep Phase 5 documentation alignment active for remaining doc-truth cleanup
+- continue execution in roadmap order at Phase 4 unless new evidence forces a sequencing correction
+
+
+---
+
+## Phase 4 Ingestion Audit — Route Reference Correction
+
+### Resolution summary
+
+Phase 4 ingestion audit (docs/audits/phase4-ingestion-audit.md) found one mismatch: the roadmap said `POST /api/seo/ingest` but the actual runtime route is `POST /api/seo/ingest/run`. Hammer modules already targeted the correct route. No implementation bug.
+
+### Grounded ideas preserved
+- roadmap route text must match actual Next.js route shape, not an approximation of the directory structure
+- hammer truth already matching runtime reality is a sign the system works; the docs were the liar, not the code
+- not every mismatch is an implementation bug — sometimes the correction is a one-line doc fix
+- credential provisioning (DataForSEO) is an operator decision, not a doc or code gap
+
+### Ideas explicitly rejected
+- using a route-name doc correction as justification for new ingestion architecture
+- expanding the ingestion surface because the audit touched it
+- treating missing DataForSEO credentials as a code blocker rather than an operator provisioning decision
+
+### Active direction
+- Phase 4 roadmap text now matches runtime reality
+- Phase 4 remains pending; execution can proceed when operator is ready
+- credential provisioning is orthogonal to Phase 4 structural readiness
+
+---
+
+## Phase 4 Completion and Ingest Hammer Self-Bootstrap Notes
+
+### Resolution summary
+
+Phase 4 is now complete. The earlier ingestion audit corrected the roadmap route reference from POST /api/seo/ingest to POST /api/seo/ingest/run, and the remaining execution blocker turned out to be a local hammer setup bug rather than an ingestion architecture gap. scripts/hammer/hammer-dataforseo-ingest.ps1 now self-bootstraps s3KtId when standalone or partial execution does not inherit SIL-3 coordinator state.
+
+The current validated full-hammer baseline is:
+- **PASS:** 680
+- **FAIL:** 0
+- **SKIP:** 10
+
+### Grounded ideas preserved
+- roadmap route text must match actual runtime route shape
+- not every ingest-lane failure signal is a route or provider bug; sometimes a hammer module is incorrectly inheriting setup state
+- standalone hammer modules should bootstrap their own minimum valid test state when that can be done without ownership drift
+- provider rejection of a gibberish hammer query can still be a valid PASS for route-contract/error-envelope testing
+- Phase 4 closeout required no schema changes and no endpoint additions
+
+### Ideas explicitly rejected
+- treating the standalone s3KtId setup bug as justification for ingestion-surface redesign
+- interpreting a provider-side nonsense-query rejection as a VEDA ingest bug
+- expanding the ingestion architecture because the hammer lane needed a local bootstrap correction
+
+### Active direction
+- treat Phase 4 as complete
+- retain docs/audits/phase4-ingestion-audit.md as the audit record for the route-reference correction
+- continue with Phase 5 — Documentation Alignment as the active next lane

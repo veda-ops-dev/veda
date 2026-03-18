@@ -124,3 +124,31 @@ What to watch:
 ---
 
 These rules are part of the VEDA system invariants and must be preserved across all operator surfaces.
+
+
+---
+
+## Roadmap reconciliation note
+
+- `docs/ROADMAP.md` Phase 3 has been reconciled to repo reality and is now marked `complete`
+- reconciliation basis: MCP audit/documentation work was already completed in practice and recorded by commits `ab4a622` and `2a90e81`
+- practical next execution lane remains Phase 4 — Ingestion Pipeline Validation
+- this status reconciliation is a control-surface update, not a new architecture decision
+
+## Phase 4 ingestion audit correction
+
+- Phase 4 ingestion audit (docs/audits/phase4-ingestion-audit.md) found roadmap text drift only
+- Route reference corrected: `POST /api/seo/ingest` → `POST /api/seo/ingest/run` in docs/ROADMAP.md
+- "Already implemented" reference tightened: `src/app/api/seo/ingest/` → `src/app/api/seo/ingest/run/`
+- Hammer modules and fixture scripts were already aligned to the correct route
+- No implementation bug found; no code changes required
+- Credential provisioning (DATAFORSEO_LOGIN/PASSWORD) is an operator decision, not a doc or code gap
+
+## Phase 4 completion note
+
+- Phase 4 is now complete in docs/ROADMAP.md
+- retained docs/audits/phase4-ingestion-audit.md as the audit record for the route-reference correction
+- route reference correction preserved: POST /api/seo/ingest → POST /api/seo/ingest/run
+- scripts/hammer/hammer-dataforseo-ingest.ps1 now self-bootstraps s3KtId when standalone execution lacks SIL-3 coordinator context
+- validated new full coordinator baseline: **680 PASS / 0 FAIL / 10 SKIP**
+- no schema changes or endpoint additions were required to close Phase 4
