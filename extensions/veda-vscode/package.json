@@ -1,0 +1,94 @@
+{
+  "name": "veda-vscode",
+  "displayName": "VEDA Operator Surface",
+  "description": "Bounded read-only operator surface for the V Ecosystem. Reads from VEDA observability APIs — no DB access, no local business logic, no hidden mutation.",
+  "version": "0.2.0",
+  "publisher": "v-ecosystem",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:veda.selectEnvironment",
+    "onCommand:veda.selectProject",
+    "onCommand:veda.showSerpWeather",
+    "onCommand:veda.showKeywordVolatility",
+    "onCommand:veda.showKeywordOverview",
+    "onCommand:veda.showProjectInvestigation"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "veda.selectEnvironment",
+        "title": "VEDA: Select Environment"
+      },
+      {
+        "command": "veda.selectProject",
+        "title": "VEDA: Select Project"
+      },
+      {
+        "command": "veda.showSerpWeather",
+        "title": "VEDA: Show SERP Weather (Project)"
+      },
+      {
+        "command": "veda.showKeywordVolatility",
+        "title": "VEDA: Show Keyword Volatility"
+      },
+      {
+        "command": "veda.showKeywordOverview",
+        "title": "VEDA: Keyword Picker -> Overview"
+      },
+      {
+        "command": "veda.showProjectInvestigation",
+        "title": "VEDA: Project Investigation Summary"
+      }
+    ],
+    "configuration": {
+      "title": "VEDA",
+      "properties": {
+        "veda.environments": {
+          "type": "array",
+          "default": [
+            {
+              "name": "Local",
+              "baseUrl": "http://localhost:3000"
+            }
+          ],
+          "description": "Available VEDA API environments",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "baseUrl": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "baseUrl"
+            ]
+          }
+        },
+        "veda.activeEnvironment": {
+          "type": "string",
+          "default": "Local",
+          "description": "Currently active environment name"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.0"
+  }
+}

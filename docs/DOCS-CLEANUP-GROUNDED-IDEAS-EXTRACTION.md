@@ -1603,3 +1603,30 @@ The current validated full-hammer baseline is:
 - duplicate canonical docs are resolved
 - legacy provenance refs are intentionally retained
 - `docs/architecture/architecture/` nesting is documented as intentional current state
+
+
+---
+
+## Phase 6 Operator Surface Foundation
+
+### Resolution summary
+
+VS Code successor extension created at `extensions/veda-vscode/` per `docs/systems/operator-surfaces/vscode/phase-1-spec.md`. Thin API consumer with explicit environment/project context, two read surfaces (SERP weather + keyword volatility), no DB access, no local logic, no mutation.
+
+### Grounded ideas preserved
+- operator surfaces are delivery surfaces, not owners — the extension reads from VEDA, it does not become VEDA
+- the VS Code Phase 1 spec explicitly requires thin-client discipline, read-first behavior, and no local business logic
+- environment and project context must always be explicit and visible to the operator
+- the extension is a new successor structure, not a rehab of the legacy `vscode-extension/`
+
+### Ideas explicitly rejected
+- importing Prisma or any DB client into the extension
+- computing volatility, weather, or any derived analytics locally
+- adding mutation commands in Phase 1
+- polling loops or background data refresh
+- building a panel-based command center UI in Phase 1
+
+### Active direction
+- Phase 6 is complete as a foundation
+- future extension work should follow the successor roadmap in `docs/systems/operator-surfaces/vscode/roadmap.md`
+- any new API surfaces required by future extension phases must satisfy endpoint rules independently

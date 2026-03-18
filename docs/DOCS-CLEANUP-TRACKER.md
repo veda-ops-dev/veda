@@ -163,3 +163,13 @@ These rules are part of the VEDA system invariants and must be preserved across 
 - Legacy provenance refs (`docs/archive/`, `docs/VSCODE-EXTENSION-*.md`) in successor "Supersedes" sections left intact — they document what each doc replaced in the legacy repo
 - Phase 4 status updated to complete in ROADMAP (680 PASS / 0 FAIL / 10 SKIP)
 - `docs/architecture/architecture/` nesting retained as-is; path references now consistently use the correct nested form
+
+## Phase 6 operator surface foundation
+
+- `extensions/veda-vscode/` created as the successor VS Code extension
+- This is a new structure, not a rehab of the legacy `vscode-extension/` from `C:\dev\veda`
+- Extension is a thin API consumer: no Prisma, no DB, no local business logic, no hidden mutation
+- Two read surfaces wired: SERP weather (project-level) and keyword volatility (focused diagnostic)
+- Both surfaces use existing hammer-validated API routes
+- No new routes or schema were required
+- No endpoint rules or schema rules were triggered

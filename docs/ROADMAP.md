@@ -217,8 +217,8 @@ Current state:
 | Phase 2 — Observatory Floor Hammer Hardening | complete |
 | Phase 3 — MCP Tool Surface Alignment | complete |
 | Phase 4 — Ingestion Pipeline Validation | complete |
-| Phase 5 — Documentation Alignment | active |
-| Phase 6 — Operator Surface Foundation | pending |
+| Phase 5 — Documentation Alignment | complete |
+| Phase 6 — Operator Surface Foundation | complete |
 | Phase 7 — Legacy Decommission | pending |
 
 Update this table as phases progress.
@@ -515,7 +515,20 @@ Ensure all active documentation in the clean repo reflects clean repo truth. Rem
 
 ### Status
 
-**Active**
+
+**Complete**
+
+### Outcome
+
+Completed in this phase:
+- 18 active docs corrected for nesting-drift path references (`docs/architecture/X` → `docs/architecture/architecture/X`)
+- Duplicate `V_ECOSYSTEM.md` resolved: `docs/architecture/V_ECOSYSTEM.md` kept as canonical; nested duplicate deleted
+- Duplicate `SCHEMA-REFERENCE.md` resolved: `docs/architecture/architecture/veda/SCHEMA-REFERENCE.md` kept as canonical; outer duplicate deleted
+- SIL registry updated: 5 missing active surfaces added (domain-dominance, intent-drift, feature-volatility, serp-similarity, page-command-center)
+- Legacy provenance refs in successor "Supersedes" sections confirmed intentional and left intact
+- `docs/architecture/architecture/` nesting retained as-is; all path references now correct
+- Cleanup intelligence docs updated throughout
+
 
 ### System Scope
 
@@ -574,7 +587,28 @@ Establish the VS Code successor surface foundation following the existing succes
 
 ### Status
 
-**Pending**
+**Complete**
+
+### Outcome
+
+Implemented:
+- `extensions/veda-vscode/` — successor VS Code extension (new, not legacy rehab)
+- `src/extension.ts` — activation + command registration
+- `src/api-client.ts` — thin HTTP transport (fetch-based, x-project-id headers)
+- `src/state.ts` — lightweight session state (environment + project)
+- `src/commands.ts` — 4 operator commands (environment, project, SERP weather, keyword volatility)
+- `src/status-bar.ts` — persistent environment/project context indicators
+
+Read surfaces wired:
+- Project-level: `GET /api/seo/serp-disturbances` (SERP weather, SIL-16–24 composite)
+- Focused diagnostic: `GET /api/seo/keyword-targets/{id}/volatility` (SIL-3)
+
+Invariants preserved:
+- No Prisma, no DB access, no connection strings
+- No local business logic or analytics computation
+- No hidden mutation (all commands are reads)
+- Explicit environment and project context in status bar
+- Thin HTTP client only
 
 ### System Scope
 
@@ -697,10 +731,10 @@ Phase 3  MCP Tool Surface Alignment        [complete]
 Phase 4  Ingestion Pipeline Validation     [complete]
   │
   ▼
-Phase 5  Documentation Alignment           [active]
+Phase 5  Documentation Alignment           [complete]
   │
   ▼
-Phase 6  Operator Surface Foundation       [pending]
+Phase 6  Operator Surface Foundation       [complete]
   │
   ▼
 Phase 7  Legacy Decommission               [pending]
