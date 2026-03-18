@@ -261,6 +261,10 @@ They should be preferred over stale legacy docs when there is a conflict.
 - `docs/architecture/api/validation-and-error-taxonomy.md`
 - `docs/architecture/source-provenance-and-citation.md`
 
+### MCP development-harness note
+- active docs now explicitly record that the current MCP server is also being used as a Claude Desktop-compatible development harness for bounded assistant testing
+- this is documented as a temporary practical dev/testing posture, not the final ecosystem-wide LLM access model
+
 ### Still-possible future successor docs
 
 - possible roadmap fold-ins for phased notes
@@ -290,5 +294,6 @@ Until then, it is only reviewed/classified — not finished.
 - this modularization is intentional maintenance work, not a change in hammer mission
 - hammer purpose remains invariant protection for live operational surfaces, especially DB integrity, route-contract integrity, read-only guarantees, and project isolation
 - active hammer gate now explicitly excludes stale Wave 2D residue (`hammer-core.ps1`, blueprint enforcement, quotable-blocks enforcement)`r`n- retired `hammer-core.ps1` is quarantined under `old/hammer-core.ps1` rather than left in the active hammer directory`r`n- current full active baseline: **677 PASS / 0 FAIL / 13 SKIP**
+
 
 

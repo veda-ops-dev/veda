@@ -295,11 +295,7 @@ Verify and update the MCP server tool surface to reflect all active API routes i
 
 VEDA (MCP operator surface)
 
-### Surfaces / Lanes
-
-- `mcp/server/src/tools.ts` — tool definitions
-- `mcp/server/src/tool-handlers.ts` — handler implementations
-- `mcp/server/src/api-client.ts` — HTTP client
+### Surfaces / Lanes`r`n`r`n- `mcp/server/src/tools.ts` — tool definitions`r`n- `mcp/server/src/tool-handlers.ts` — handler implementations`r`n- `mcp/server/src/api-client.ts` — HTTP client`r`n`r`n### Current implementation note`r`n`r`nThe current MCP server is also serving as a Claude Desktop-compatible development harness for bounded assistant testing.`r`nThis is a temporary practical dev/testing posture, not the final ecosystem-wide LLM access model.`r`nFuture MCP/API exposure must still preserve bounded ownership across Project V, VEDA, and V Forge.
 
 ### Source of Truth Docs
 
@@ -683,5 +679,6 @@ eliminate dependency on C:\dev\veda
 ```
 
 When Phase 7 completes, the legacy repo must no longer be required for any operation.
+
 
 

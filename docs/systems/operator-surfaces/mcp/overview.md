@@ -102,6 +102,28 @@ MCP does not flatten these into one owner.
 
 ---
 
+
+## Current Development Harness
+
+In the current repo phase, the MCP server also functions as a Claude Desktop-compatible development harness.
+
+This is a practical testing surface, not the final ecosystem-wide deployment model.
+
+It allows bounded assistant workflows to be exercised against real HTTP/API surfaces without immediately shifting all testing to paid API-driven execution.
+
+This helps validate:
+- tool descriptions
+- project scoping
+- API contract alignment
+- read/write discipline
+- bounded ownership behavior
+
+The long-term direction remains broader API-driven LLM access across the three bounded systems:
+- Project V
+- VEDA
+- V Forge
+
+But the current Claude Desktop-compatible MCP server is the cheapest and most practical dev/testing path.
 ## Current MCP Stance in This Repo
 
 In the current repo phase, MCP should be treated as:
@@ -232,4 +254,5 @@ This document should be read with:
 
 `docs/archive/post-wave2-cleanup/VEDA-MCP-TOOLS-SPEC.md` remains useful as grounded historical input for tool grouping and interaction discipline.
 It is not the active architecture authority by itself.
+
 
