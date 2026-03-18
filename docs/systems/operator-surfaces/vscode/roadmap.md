@@ -30,10 +30,10 @@ Before planning or extending any VS Code successor phase, read these documents i
 8. `docs/systems/operator-surfaces/vscode/operator-gap-map.md`
 9. `docs/systems/operator-surfaces/vscode/repo-native-workflow.md`
 10. `docs/systems/operator-surfaces/vscode/phase-1-spec.md`
-11. `docs/architecture/veda/search-intelligence-layer.md`
-12. `docs/architecture/api/api-contract-principles.md`
-13. `docs/architecture/api/validation-and-error-taxonomy.md`
-14. `docs/architecture/llm-assisted-operations.md`
+11. `docs/architecture/architecture/veda/search-intelligence-layer.md`
+12. `docs/architecture/architecture/api/api-contract-principles.md`
+13. `docs/architecture/architecture/api/validation-and-error-taxonomy.md`
+14. `docs/architecture/architecture/llm-assisted-operations.md`
 15. `docs/VSCODE-EXTENSION-SPEC.md`
 16. `docs/VSCODE-EXTENSION-LIFECYCLE-UX.md`
 17. `docs/First-run operator journey.md`
@@ -86,7 +86,7 @@ It is not the default modernization target.
 All roadmap items and related planning notes should reference docs by full repo-relative path, such as:
 - `docs/systems/operator-surfaces/vscode/phase-1-spec.md`
 - `docs/systems/operator-surfaces/vscode/repo-native-workflow.md`
-- `docs/architecture/veda/search-intelligence-layer.md`
+- `docs/architecture/architecture/veda/search-intelligence-layer.md`
 
 This keeps future LLMs and humans anchored to the right surfaces instead of guessing from vibes.
 
@@ -160,8 +160,8 @@ Read before advancing or implementing this phase:
 - `docs/systems/operator-surfaces/vscode/phase-1-spec.md`
 - `docs/systems/operator-surfaces/vscode/repo-native-workflow.md`
 - `docs/systems/operator-surfaces/vscode/operator-gap-map.md`
-- `docs/architecture/api/api-contract-principles.md`
-- `docs/architecture/api/validation-and-error-taxonomy.md`
+- `docs/architecture/architecture/api/api-contract-principles.md`
+- `docs/architecture/architecture/api/validation-and-error-taxonomy.md`
 
 ---
 
@@ -230,7 +230,7 @@ Phase 2 is done when local page/route context improves operator continuity witho
 Read before advancing or implementing this phase:
 - `docs/systems/operator-surfaces/vscode/repo-native-workflow.md`
 - `docs/systems/operator-surfaces/vscode/operator-gap-map.md`
-- `docs/architecture/veda/search-intelligence-layer.md`
+- `docs/architecture/architecture/veda/search-intelligence-layer.md`
 - `docs/systems/operator-surfaces/browser-capture/scope-and-behavior.md`
 - `docs/systems/operator-surfaces/browser-capture/ingestion-architecture.md`
 
@@ -269,7 +269,7 @@ Read before advancing or implementing this phase:
 - `docs/systems/operator-surfaces/vscode/operator-gap-map.md`
 - `docs/systems/operator-surfaces/mcp/overview.md`
 - `docs/systems/operator-surfaces/mcp/tooling-principles.md`
-- `docs/architecture/llm-assisted-operations.md`
+- `docs/architecture/architecture/llm-assisted-operations.md`
 
 ---
 
@@ -297,9 +297,9 @@ Because mutation is where “useful tool” turns into “what in the fluorescen
 
 Read before advancing or implementing this phase:
 - `docs/SYSTEM-INVARIANTS.md`
-- `docs/architecture/api/api-contract-principles.md`
-- `docs/architecture/api/validation-and-error-taxonomy.md`
-- `docs/architecture/llm-assisted-operations.md`
+- `docs/architecture/architecture/api/api-contract-principles.md`
+- `docs/architecture/architecture/api/validation-and-error-taxonomy.md`
+- `docs/architecture/architecture/llm-assisted-operations.md`
 - `docs/architecture/V_ECOSYSTEM.md`
 
 ---

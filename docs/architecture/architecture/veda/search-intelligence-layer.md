@@ -8,18 +8,18 @@ It exists to explain how VEDA derives deterministic, operator-facing search diag
 
 This is a VEDA architecture document.
 It should be read together with:
-- `docs/architecture/veda/SCHEMA-REFERENCE.md`
-- `docs/architecture/veda/observatory-models.md`
+- `docs/architecture/architecture/veda/SCHEMA-REFERENCE.md`
+- `docs/architecture/architecture/veda/observatory-models.md`
 - `docs/systems/veda/observatory/observation-ledger.md`
 - `docs/systems/veda/observatory/ingest-discipline.md`
-- `docs/architecture/api/api-contract-principles.md`
-- `docs/architecture/api/validation-and-error-taxonomy.md`
+- `docs/architecture/architecture/api/api-contract-principles.md`
+- `docs/architecture/architecture/api/validation-and-error-taxonomy.md`
 
 If this document conflicts with:
 - `docs/architecture/V_ECOSYSTEM.md`
 - `docs/VEDA_WAVE_2D_CLOSEOUT.md`
 - `docs/SYSTEM-INVARIANTS.md`
-- `docs/architecture/veda/SCHEMA-REFERENCE.md`
+- `docs/architecture/architecture/veda/SCHEMA-REFERENCE.md`
 - the current implementation in `src/lib/seo/` and `src/app/api/seo/`
 
 those higher-authority sources or current implementation win and this document must be updated.
@@ -259,7 +259,7 @@ It includes:
 - audit vocabulary
 
 This tier is defined primarily by:
-- `docs/architecture/veda/SCHEMA-REFERENCE.md`
+- `docs/architecture/architecture/veda/SCHEMA-REFERENCE.md`
 - `docs/systems/veda/observatory/observation-ledger.md`
 - `docs/systems/veda/observatory/ingest-discipline.md`
 
@@ -330,6 +330,11 @@ It does not mean every surface has equal strategic priority.
 | 22 | Keyword Impact Ranking | `src/lib/seo/serp-keyword-impact.ts` | `src/app/api/seo/serp-disturbances/route.ts` |
 | 23 | Alert-Affected Keyword Set | `src/lib/seo/serp-keyword-impact.ts` | `src/app/api/seo/serp-disturbances/route.ts` |
 | 24 | Operator Action Hints | `src/lib/seo/serp-operator-hints.ts` | `src/app/api/seo/serp-disturbances/route.ts` |
+| — | Domain Dominance | `src/lib/seo/domain-dominance.ts` | `src/app/api/seo/keyword-targets/[id]/domain-dominance/route.ts` |
+| — | Intent Drift | `src/lib/seo/intent-drift.ts` | `src/app/api/seo/keyword-targets/[id]/intent-drift/route.ts` |
+| — | Feature Volatility | `src/lib/seo/feature-volatility.ts` | `src/app/api/seo/keyword-targets/[id]/feature-volatility/route.ts` |
+| — | SERP Similarity | `src/lib/seo/serp-similarity.ts` | `src/app/api/seo/keyword-targets/[id]/serp-similarity/route.ts` |
+| — | Page Command Center | `src/lib/seo/page-command-center.ts` | `src/app/api/seo/page-command-center/route.ts` |
 
 ---
 
@@ -345,6 +350,7 @@ It is included in the registry for legibility, but it remains observatory truth 
 Several layers are grouped into composite delivery routes such as:
 - `src/app/api/seo/serp-disturbances/route.ts`
 - `src/app/api/seo/keyword-targets/[id]/overview/route.ts`
+- `src/app/api/seo/page-command-center/route.ts`
 
 That is acceptable as long as the underlying derivation remains explicit and bounded.
 
@@ -419,14 +425,14 @@ The layer also needs API-level hammer coverage for its composite and operator-fa
 ## Relationship to Active Docs
 
 This document should be read with:
-- `docs/architecture/veda/SCHEMA-REFERENCE.md`
-- `docs/architecture/veda/observatory-models.md`
+- `docs/architecture/architecture/veda/SCHEMA-REFERENCE.md`
+- `docs/architecture/architecture/veda/observatory-models.md`
 - `docs/systems/veda/observatory/observation-ledger.md`
 - `docs/systems/veda/observatory/ingest-discipline.md`
-- `docs/architecture/api/api-contract-principles.md`
-- `docs/architecture/api/validation-and-error-taxonomy.md`
-- `docs/architecture/security/auth-and-actor-model.md`
-- `docs/architecture/llm-assisted-operations.md`
+- `docs/architecture/architecture/api/api-contract-principles.md`
+- `docs/architecture/architecture/api/validation-and-error-taxonomy.md`
+- `docs/architecture/architecture/security/auth-and-actor-model.md`
+- `docs/architecture/architecture/llm-assisted-operations.md`
 
 Together these define:
 - the observatory floor

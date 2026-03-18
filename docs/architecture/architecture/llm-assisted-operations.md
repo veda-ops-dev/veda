@@ -14,9 +14,9 @@ It defines how LLM assistance should behave when interacting with Project V, VED
 If this document conflicts with:
 - `docs/architecture/V_ECOSYSTEM.md`
 - `docs/SYSTEM-INVARIANTS.md`
-- `docs/architecture/security/auth-and-actor-model.md`
-- `docs/architecture/api/api-contract-principles.md`
-- `docs/architecture/api/validation-and-error-taxonomy.md`
+- `docs/architecture/architecture/security/auth-and-actor-model.md`
+- `docs/architecture/architecture/api/api-contract-principles.md`
+- `docs/architecture/architecture/api/validation-and-error-taxonomy.md`
 
 those higher-authority sources win and this document must be updated.
 
@@ -289,7 +289,7 @@ The system should preserve enough context to answer:
 - what changed, if anything?
 
 Where canonical state changes occur, attribution should align with:
-- `docs/architecture/security/auth-and-actor-model.md`
+- `docs/architecture/architecture/security/auth-and-actor-model.md`
 - `docs/systems/veda/observatory/EVENT-VOCABULARY.md`
 - `docs/systems/veda/observatory/event-auditability.md`
 
@@ -377,9 +377,9 @@ If an LLM-assisted workflow weakens those invariants, it is not a safe workflow.
 ## Relationship to Other Docs
 
 This document should be read alongside:
-- `docs/architecture/security/auth-and-actor-model.md`
-- `docs/architecture/api/api-contract-principles.md`
-- `docs/architecture/api/validation-and-error-taxonomy.md`
+- `docs/architecture/architecture/security/auth-and-actor-model.md`
+- `docs/architecture/architecture/api/api-contract-principles.md`
+- `docs/architecture/architecture/api/validation-and-error-taxonomy.md`
 - `docs/ROADMAP.md`
 
 System-specific docs may define narrower LLM-assisted patterns later, but they should inherit the governance doctrine defined here.

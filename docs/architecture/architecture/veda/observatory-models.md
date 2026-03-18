@@ -7,14 +7,14 @@ This document defines the observatory model shapes that belong in VEDA.
 It exists to describe how VEDA can support multiple observatories while preserving clean ownership, project-scoped isolation, and time-aware observed truth.
 
 This is a VEDA architecture document.
-It does not replace `docs/architecture/veda/SCHEMA-REFERENCE.md`.
+It does not replace `docs/architecture/architecture/veda/SCHEMA-REFERENCE.md`.
 It provides the higher-level model needed to classify observatories and keep their boundaries clean.
 
 If this document conflicts with:
 - `docs/architecture/V_ECOSYSTEM.md`
 - `docs/VEDA_WAVE_2D_CLOSEOUT.md`
 - `docs/SYSTEM-INVARIANTS.md`
-- `docs/architecture/veda/SCHEMA-REFERENCE.md`
+- `docs/architecture/architecture/veda/SCHEMA-REFERENCE.md`
 - the current Prisma schema
 
 those higher-authority sources win and this document must be updated.
@@ -362,13 +362,13 @@ Future observatories should extend this model carefully rather than ignore it.
 ## Relationship to Active Docs
 
 This document should be read together with:
-- `docs/architecture/veda/SCHEMA-REFERENCE.md`
+- `docs/architecture/architecture/veda/SCHEMA-REFERENCE.md`
 - `docs/systems/veda/observatory/observation-ledger.md`
 - `docs/systems/veda/observatory/ingest-discipline.md`
 - `docs/systems/veda/observatory/source-capture-and-inbox.md`
 - `docs/systems/veda/observatory/event-auditability.md`
 - `docs/systems/veda/observatory/EVENT-VOCABULARY.md`
-- `docs/architecture/veda/content-graph-model.md`
+- `docs/architecture/architecture/veda/content-graph-model.md`
 
 ---
 

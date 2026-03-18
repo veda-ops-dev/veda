@@ -208,7 +208,7 @@ The API must decide whether that actor is allowed to perform the requested actio
 The API should preserve who initiated the change and under what approved authority it occurred.
 
 This should align with:
-- `docs/architecture/security/auth-and-actor-model.md`
+- `docs/architecture/architecture/security/auth-and-actor-model.md`
 - VEDA event vocabulary where VEDA mutations are involved
 
 An API that authenticates but fails to attribute meaningfully is only half awake.
@@ -439,9 +439,9 @@ If one of those fails, the contract is weak even if the endpoint technically ret
 ## Relationship to Other Docs
 
 This document should be read alongside:
-- `docs/architecture/security/auth-and-actor-model.md`
-- `docs/architecture/platform/vercel-neon-prisma.md`
-- `docs/architecture/platform/deployment-infrastructure-baseline.md`
+- `docs/architecture/architecture/security/auth-and-actor-model.md`
+- `docs/architecture/architecture/platform/vercel-neon-prisma.md`
+- `docs/architecture/architecture/platform/deployment-infrastructure-baseline.md`
 - `docs/SYSTEM-INVARIANTS.md`
 - `docs/systems/veda/observatory/event-auditability.md`
 

@@ -1577,3 +1577,29 @@ The current validated full-hammer baseline is:
 - treat Phase 4 as complete
 - retain docs/audits/phase4-ingestion-audit.md as the audit record for the route-reference correction
 - continue with Phase 5 — Documentation Alignment as the active next lane
+
+
+---
+
+## Phase 5 Documentation Alignment — Path-Truth Corrections
+
+### Resolution summary
+
+18 active docs had nesting-drift path references (using `docs/architecture/X` when the file was actually at `docs/architecture/architecture/X`). All corrected. Two duplicate canonical docs resolved: V_ECOSYSTEM.md (outer kept) and SCHEMA-REFERENCE.md (nested kept per ROADMAP authority).
+
+### Grounded ideas preserved
+- the `docs/architecture/architecture/` nesting is the current structural reality; path references must match, not assume a flatter structure
+- duplicate canonical docs must be resolved to a single authoritative copy, not left for drift to re-establish
+- successor docs may reference legacy repo paths in provenance sections — these are intentional and should not be "fixed" to point at nonexistent clean-repo paths
+- Phase 5 is a control-surface truth lane, not a content-expansion lane
+
+### Ideas explicitly rejected
+- flattening `docs/architecture/architecture/` into `docs/architecture/` (would require moving many files + rewriting all refs again — cost exceeds benefit)
+- removing legacy provenance references from successor docs (they document reconstruction lineage)
+- rewriting doc content for style during a path-truth pass
+
+### Active direction
+- path references in all active docs now resolve correctly against clean-repo structure
+- duplicate canonical docs are resolved
+- legacy provenance refs are intentionally retained
+- `docs/architecture/architecture/` nesting is documented as intentional current state

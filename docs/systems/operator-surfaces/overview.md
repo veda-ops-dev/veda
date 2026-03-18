@@ -194,7 +194,7 @@ This document should be read with:
 - `docs/architecture/V_ECOSYSTEM.md`
 - `docs/SYSTEM-INVARIANTS.md`
 - `docs/ROADMAP.md`
-- `docs/architecture/veda/search-intelligence-layer.md`
+- `docs/architecture/architecture/veda/search-intelligence-layer.md`
 - `docs/VSCODE-EXTENSION-SPEC.md`
 - `docs/VSCODE-EXTENSION-LIFECYCLE-UX.md`
 - `docs/First-run operator journey.md`

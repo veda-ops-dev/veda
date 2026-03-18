@@ -14,7 +14,7 @@ If this document conflicts with:
 - `docs/architecture/V_ECOSYSTEM.md`
 - `docs/VEDA_WAVE_2D_CLOSEOUT.md`
 - `docs/SYSTEM-INVARIANTS.md`
-- `docs/architecture/api/api-contract-principles.md`
+- `docs/architecture/architecture/api/api-contract-principles.md`
 - current schema or enforced implementation behavior
 
 those higher-authority sources win and this document must be updated.
@@ -519,8 +519,8 @@ If one of those fails, the taxonomy is weak even if the API technically returns 
 ## Relationship to Other Docs
 
 This document should be read alongside:
-- `docs/architecture/api/api-contract-principles.md`
-- `docs/architecture/security/auth-and-actor-model.md`
+- `docs/architecture/architecture/api/api-contract-principles.md`
+- `docs/architecture/architecture/security/auth-and-actor-model.md`
 - `docs/SYSTEM-INVARIANTS.md`
 - `docs/systems/veda/observatory/event-auditability.md`
 

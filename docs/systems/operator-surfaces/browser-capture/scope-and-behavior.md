@@ -252,7 +252,7 @@ This document should be read with:
 - `docs/systems/veda/observatory/ingest-discipline.md`
 - `docs/architecture/V_ECOSYSTEM.md`
 - `docs/SYSTEM-INVARIANTS.md`
-- `docs/architecture/llm-assisted-operations.md`
+- `docs/architecture/architecture/llm-assisted-operations.md`
 - `docs/archive/post-wave2-cleanup/02-CHROME-EXTENSION-SCOPE-AND-BEHAVIOR.md`
 - `docs/archive/post-wave2-cleanup/08-EXTENSION-INGESTION-ARCHITECTURE.md`
 

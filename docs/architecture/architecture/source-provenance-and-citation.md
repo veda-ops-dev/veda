@@ -14,9 +14,9 @@ It describes the cross-system contract between observatory provenance and output
 It should be read together with:
 - `docs/architecture/V_ECOSYSTEM.md`
 - `docs/SYSTEM-INVARIANTS.md`
-- `docs/architecture/llm-assisted-operations.md`
+- `docs/architecture/architecture/llm-assisted-operations.md`
 - `docs/systems/veda/observatory/source-capture-and-inbox.md`
-- `docs/architecture/api/api-contract-principles.md`
+- `docs/architecture/architecture/api/api-contract-principles.md`
 
 If this document conflicts with higher-authority truth docs or active bounded-system ownership, those higher-authority sources win and this document must be updated.
 

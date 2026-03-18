@@ -25,10 +25,10 @@ This review is grounded against:
 - `prisma/migrations/20260316000200_project_scoped_source_uniqueness/migration.sql`
 - `prisma/migrations/20260316000300_semantic_enum_hardening/migration.sql`
 - `docs/SYSTEM-INVARIANTS.md`
-- `docs/architecture/veda/SCHEMA-REFERENCE.md`
-- `docs/architecture/veda/observatory-models.md`
-- `docs/architecture/veda/content-graph-model.md`
-- `docs/architecture/platform/vercel-neon-prisma.md`
+- `docs/architecture/architecture/veda/SCHEMA-REFERENCE.md`
+- `docs/architecture/architecture/veda/observatory-models.md`
+- `docs/architecture/architecture/veda/content-graph-model.md`
+- `docs/architecture/architecture/platform/vercel-neon-prisma.md`
 - `docs/ROADMAP.md`
 
 ---
@@ -63,7 +63,7 @@ That is a much healthier place to be.
 - `DATABASE_URL`
 - `DIRECT_DATABASE_URL`
 
-That aligns with `docs/architecture/platform/vercel-neon-prisma.md` and remains the correct Neon plus Prisma baseline.
+That aligns with `docs/architecture/architecture/platform/vercel-neon-prisma.md` and remains the correct Neon plus Prisma baseline.
 
 ### 2. Core observatory domains are cleanly separated
 
@@ -75,7 +75,7 @@ The schema currently models:
 - system config
 - content graph
 
-That matches `docs/architecture/veda/SCHEMA-REFERENCE.md` and `docs/architecture/veda/observatory-models.md`.
+That matches `docs/architecture/architecture/veda/SCHEMA-REFERENCE.md` and `docs/architecture/architecture/veda/observatory-models.md`.
 
 ### 3. Search observation ledger shape is sound
 

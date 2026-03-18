@@ -169,4 +169,4 @@ All write tools: call mutating routes explicitly, are annotated "WRITE —" in t
 - `docs/systems/operator-surfaces/mcp/tooling-principles.md`
 - `docs/architecture/V_ECOSYSTEM.md`
 - `docs/SYSTEM-INVARIANTS.md`
-- `docs/architecture/api/api-contract-principles.md`
+- `docs/architecture/architecture/api/api-contract-principles.md`

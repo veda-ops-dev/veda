@@ -20,7 +20,7 @@ Canonical truth remains:
 - `docs/architecture/V_ECOSYSTEM.md`
 - `docs/VEDA_WAVE_2D_CLOSEOUT.md`
 - `docs/SYSTEM-INVARIANTS.md`
-- `docs/architecture/veda/SCHEMA-REFERENCE.md`
+- `docs/architecture/architecture/veda/SCHEMA-REFERENCE.md`
 - `docs/systems/veda/observatory/EVENT-VOCABULARY.md`
 
 Related working doc:
@@ -152,3 +152,14 @@ These rules are part of the VEDA system invariants and must be preserved across 
 - scripts/hammer/hammer-dataforseo-ingest.ps1 now self-bootstraps s3KtId when standalone execution lacks SIL-3 coordinator context
 - validated new full coordinator baseline: **680 PASS / 0 FAIL / 10 SKIP**
 - no schema changes or endpoint additions were required to close Phase 4
+
+## Phase 5 documentation alignment — path-truth corrections
+
+- 18 active docs had broken path references due to nesting drift: they used `docs/architecture/X` instead of `docs/architecture/architecture/X`
+- All 18 files corrected to use the actual nested paths
+- Duplicate `V_ECOSYSTEM.md` resolved: `docs/architecture/V_ECOSYSTEM.md` kept as canonical; `docs/architecture/architecture/V_ECOSYSTEM.md` deleted
+- Duplicate `SCHEMA-REFERENCE.md` resolved: `docs/architecture/architecture/veda/SCHEMA-REFERENCE.md` kept as canonical (per ROADMAP "Read This First"); `docs/architecture/veda/SCHEMA-REFERENCE.md` deleted; empty `docs/architecture/veda/` directory removed
+- 5 additional active docs corrected from `docs/architecture/veda/SCHEMA-REFERENCE.md` to the nested canonical path
+- Legacy provenance refs (`docs/archive/`, `docs/VSCODE-EXTENSION-*.md`) in successor "Supersedes" sections left intact — they document what each doc replaced in the legacy repo
+- Phase 4 status updated to complete in ROADMAP (680 PASS / 0 FAIL / 10 SKIP)
+- `docs/architecture/architecture/` nesting retained as-is; path references now consistently use the correct nested form

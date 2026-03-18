@@ -8,14 +8,14 @@ It exists to explain how VEDA records the observed structural state of project c
 
 This is a VEDA architecture document.
 It should be read as the detailed companion to:
-- `docs/architecture/veda/SCHEMA-REFERENCE.md`
-- `docs/architecture/veda/observatory-models.md`
+- `docs/architecture/architecture/veda/SCHEMA-REFERENCE.md`
+- `docs/architecture/architecture/veda/observatory-models.md`
 
 If this document conflicts with:
 - `docs/architecture/V_ECOSYSTEM.md`
 - `docs/VEDA_WAVE_2D_CLOSEOUT.md`
 - `docs/SYSTEM-INVARIANTS.md`
-- `docs/architecture/veda/SCHEMA-REFERENCE.md`
+- `docs/architecture/architecture/veda/SCHEMA-REFERENCE.md`
 - the current Prisma schema
 
 those higher-authority sources win and this document must be updated.
@@ -505,8 +505,8 @@ If a proposed graph model starts taking on planning or execution responsibilitie
 ## Relationship to Active Docs
 
 This document should be read alongside:
-- `docs/architecture/veda/SCHEMA-REFERENCE.md`
-- `docs/architecture/veda/observatory-models.md`
+- `docs/architecture/architecture/veda/SCHEMA-REFERENCE.md`
+- `docs/architecture/architecture/veda/observatory-models.md`
 - `docs/SYSTEM-INVARIANTS.md`
 - `docs/systems/veda/observatory/EVENT-VOCABULARY.md`
 - `docs/systems/veda/observatory/event-auditability.md`

@@ -257,8 +257,8 @@ This document should be read with:
 - `docs/systems/operator-surfaces/browser-capture/scope-and-behavior.md`
 - `docs/systems/veda/observatory/source-capture-and-inbox.md`
 - `docs/systems/veda/observatory/ingest-discipline.md`
-- `docs/architecture/api/api-contract-principles.md`
-- `docs/architecture/api/validation-and-error-taxonomy.md`
+- `docs/architecture/architecture/api/api-contract-principles.md`
+- `docs/architecture/architecture/api/validation-and-error-taxonomy.md`
 - `docs/architecture/V_ECOSYSTEM.md`
 - `docs/SYSTEM-INVARIANTS.md`
 - `docs/archive/post-wave2-cleanup/08-EXTENSION-INGESTION-ARCHITECTURE.md`

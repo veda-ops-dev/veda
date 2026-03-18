@@ -446,7 +446,19 @@ Confirm the DataForSEO ingestion pipeline and fixture replay system work end-to-
 
 ### Status
 
-**Pending**
+**Complete**
+
+### Outcome
+
+Validated by full hammer coordinator run:
+- `hammer-dataforseo-ingest.ps1`: 10 PASS / 0 FAIL / 0 SKIP
+- `hammer-realdata-fixtures.ps1`: fixture replay + seeding + value invariants pass
+- `hammer-w5-persistence.ps1`: deterministic persistence, EventLog, idempotency, cross-project isolation pass
+- Full coordinator: 680 PASS / 0 FAIL / 10 SKIP
+
+Fixes applied during Phase 4:
+- Roadmap route reference corrected from `/api/seo/ingest` to `/api/seo/ingest/run`
+- `hammer-dataforseo-ingest.ps1` self-bootstrap setup added (was missing, caused 7 SKIPs)
 
 ### System Scope
 
@@ -534,8 +546,8 @@ VEDA (documentation layer, all bounded systems referenced)
 ### Remaining implementation targets
 
 1. Audit all doc references to file paths — confirm each referenced path exists in clean repo
-2. Resolve the duplicate `V_ECOSYSTEM.md` (exists at both `docs/architecture/V_ECOSYSTEM.md` and `docs/architecture/architecture/V_ECOSYSTEM.md`) — keep one canonical location
-3. Resolve nested `docs/architecture/architecture/` structure — flatten if warranted or document the nesting intent
+2. ~~Resolve the duplicate `V_ECOSYSTEM.md`~~ — resolved: `docs/architecture/V_ECOSYSTEM.md` is canonical; nested duplicate deleted
+3. ~~Resolve nested `docs/architecture/architecture/` structure~~ — resolved: nesting retained as-is; all cross-doc references corrected to use actual nested paths
 4. Review `DOCS-CLEANUP-TRACKER.md` for any open items
 5. Update `search-intelligence-layer.md` registry if any implementation anchors have shifted during carry-forward
 6. Verify `ROADMAP.md` doc path references remain valid

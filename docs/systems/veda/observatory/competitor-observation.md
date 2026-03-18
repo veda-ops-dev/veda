@@ -8,9 +8,9 @@ It exists to preserve a clean, observability-only approach to competitive search
 
 This is a VEDA architecture and behavior document.
 It should be read together with:
-- `docs/architecture/veda/observatory-models.md`
-- `docs/architecture/veda/content-graph-model.md`
-- `docs/architecture/veda/search-intelligence-layer.md`
+- `docs/architecture/architecture/veda/observatory-models.md`
+- `docs/architecture/architecture/veda/content-graph-model.md`
+- `docs/architecture/architecture/veda/search-intelligence-layer.md`
 - `docs/systems/veda/observatory/observation-ledger.md`
 - `docs/systems/veda/observatory/source-capture-and-inbox.md`
 
@@ -18,7 +18,7 @@ If this document conflicts with:
 - `docs/architecture/V_ECOSYSTEM.md`
 - `docs/VEDA_WAVE_2D_CLOSEOUT.md`
 - `docs/SYSTEM-INVARIANTS.md`
-- `docs/architecture/veda/SCHEMA-REFERENCE.md`
+- `docs/architecture/architecture/veda/SCHEMA-REFERENCE.md`
 - the current Prisma schema
 
 those higher-authority sources win and this document must be updated.
@@ -128,7 +128,7 @@ The practical implication is simple:
 Use the existing observatory floor first:
 - `SERPSnapshot` and related search observations for discovery
 - `SourceItem` capture for preserved evidence and provenance
-- thin derivation inside `docs/architecture/veda/search-intelligence-layer.md` for diagnostics
+- thin derivation inside `docs/architecture/architecture/veda/search-intelligence-layer.md` for diagnostics
 
 ### Current non-claim
 This doc does **not** claim that competitor-specific schema, APIs, or MCP tools already exist.
@@ -265,7 +265,7 @@ Until dedicated competitor persistence exists, the durable audit trail comes fro
 
 ## Relationship to the Content Graph
 
-The content graph in `docs/architecture/veda/content-graph-model.md` is the project-scoped graph of observed **project** content structure.
+The content graph in `docs/architecture/architecture/veda/content-graph-model.md` is the project-scoped graph of observed **project** content structure.
 
 That distinction matters.
 
@@ -294,7 +294,7 @@ Examples of derived use include:
 Those are Search Intelligence Layer uses.
 They remain derived and read-oriented.
 
-This doc therefore complements `docs/architecture/veda/search-intelligence-layer.md` rather than replacing it.
+This doc therefore complements `docs/architecture/architecture/veda/search-intelligence-layer.md` rather than replacing it.
 Competitor observation preserves better external evidence.
 The Search Intelligence Layer interprets it.
 
@@ -400,9 +400,9 @@ They are not established here.
 Use this document as the active successor for competitor-observation framing.
 
 Read it with:
-- `docs/architecture/veda/observatory-models.md`
-- `docs/architecture/veda/content-graph-model.md`
-- `docs/architecture/veda/search-intelligence-layer.md`
+- `docs/architecture/architecture/veda/observatory-models.md`
+- `docs/architecture/architecture/veda/content-graph-model.md`
+- `docs/architecture/architecture/veda/search-intelligence-layer.md`
 - `docs/systems/veda/observatory/observation-ledger.md`
 - `docs/systems/veda/observatory/source-capture-and-inbox.md`
 - `docs/systems/veda/observatory/event-auditability.md`

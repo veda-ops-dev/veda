@@ -234,7 +234,7 @@ This document should be read with:
 - `docs/systems/operator-surfaces/mcp/overview.md`
 - `docs/architecture/V_ECOSYSTEM.md`
 - `docs/SYSTEM-INVARIANTS.md`
-- `docs/architecture/api/api-contract-principles.md`
-- `docs/architecture/api/validation-and-error-taxonomy.md`
-- `docs/architecture/llm-assisted-operations.md`
-- `docs/architecture/veda/search-intelligence-layer.md`
+- `docs/architecture/architecture/api/api-contract-principles.md`
+- `docs/architecture/architecture/api/validation-and-error-taxonomy.md`
+- `docs/architecture/architecture/llm-assisted-operations.md`
+- `docs/architecture/architecture/veda/search-intelligence-layer.md`

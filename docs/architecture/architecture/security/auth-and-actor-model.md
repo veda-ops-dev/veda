@@ -424,8 +424,8 @@ They are not clever shortcuts.
 ## Relationship to Other Docs
 
 This document should be read alongside:
-- `docs/architecture/platform/vercel-neon-prisma.md`
-- `docs/architecture/platform/deployment-infrastructure-baseline.md`
+- `docs/architecture/architecture/platform/vercel-neon-prisma.md`
+- `docs/architecture/architecture/platform/deployment-infrastructure-baseline.md`
 - `docs/systems/veda/observatory/EVENT-VOCABULARY.md`
 - `docs/systems/veda/observatory/event-auditability.md`
 
