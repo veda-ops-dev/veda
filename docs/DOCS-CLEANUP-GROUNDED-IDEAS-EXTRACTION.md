@@ -1493,3 +1493,4 @@ Completed outcomes:
 - keep remaining SKIPs honest: provider-dependent, environment-dependent, or genuinely richer-data-threshold constrained
 - continue Phase 2 tightening only where observability invariants can be strengthened without schema or endpoint drift
 - preserve the rule that hammer changes must improve truthfulness, not just total PASS count
+

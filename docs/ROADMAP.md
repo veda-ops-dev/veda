@@ -48,7 +48,7 @@ The clean repo has now reached a validated full-hammer checkpoint aligned to pos
 - `GET /api/projects` returns `200`
 - Prisma client, env, and DB connectivity are working
 - Hammer bootstrap works (`hammer_setup`)
-- Full coordinator `scripts/api-hammer.ps1` passes with **0 FAIL**`r`n- Current full baseline:`r`n  - **PASS:** 677`r`n  - **FAIL:** 0`r`n  - **SKIP:** 13`r`n- Modular hammer structure is in place
+- Full coordinator `scripts/api-hammer.ps1` passes with **0 FAIL**`r`n- Current full baseline:`r`n  - **PASS:** 678`r`n  - **FAIL:** 0`r`n  - **SKIP:** 12`r`n- Modular hammer structure is in place
 - SERP disturbances lane is hardened and validated
 - VEDA Brain routes are present and passing`r`n- Stale Wave 2D residue was removed from the active hammer gate`r`n- Observatory-floor hammer coverage now includes source capture and events`r`n- Mutation strictness is enforced for search-performance ingest and source-item capture`r`n- Weak hammer skips were tightened where seeded local data already exists
 
@@ -185,7 +185,7 @@ Current state:
 |------|--------|
 | Phase 0 — Hammer Baseline Validation | complete |
 | Phase 1 — VEDA Brain Route Reconstruction | complete |
-| Phase 2 — Observatory Floor Hammer Hardening | active |
+| Phase 2 — Observatory Floor Hammer Hardening | complete |
 | Phase 3 — MCP Tool Surface Alignment | pending |
 | Phase 4 — Ingestion Pipeline Validation | pending |
 | Phase 5 — Documentation Alignment | active |
@@ -234,9 +234,9 @@ Confirm every carried-forward active VEDA surface in the clean repo passes its h
 
 - Full coordinator run completes with **0 FAIL**
 - Baseline snapshot recorded:
-  - **PASS:** 677
+  - **PASS:** 678
   - **FAIL:** 0
-  - **SKIP:** 13
+  - **SKIP:** 12
 - Stale Wave 2D residue removed from the active hammer gate
 - Full hammer now reflects current VEDA truth instead of inherited mixed-era assumptions
 
@@ -277,52 +277,7 @@ Met.
 
 ---
 
-## Phase 2 — Observatory Floor Hammer Hardening
-
-### Objective
-
-Expand and clean hammer coverage for the observatory floor surfaces so the active gate fully reflects current VEDA observability truth and no longer carries entity-era or blueprint-era assumptions.
-
-### Status`r`n`r`n**Active**
-
-### System Scope
-
-VEDA
-
-### Surfaces / Lanes
-
-- `GET /api/source-items`
-- `POST /api/source-items/capture`
-- `GET /api/events`
-- `POST /api/projects`
-- `GET /api/projects`
-- current project-context strictness tests
-- current observatory-floor mutation and read invariants
-
-### Source of Truth Docs
-
-- `docs/systems/veda/observatory/observation-ledger.md`
-- `docs/systems/veda/observatory/ingest-discipline.md`
-- `docs/systems/veda/observatory/source-capture-and-inbox.md`
-- `docs/systems/veda/observatory/event-auditability.md`
-- `docs/systems/veda/observatory/EVENT-VOCABULARY.md`
-- `docs/SYSTEM-INVARIANTS.md`
-- `docs/architecture/architecture/security/auth-and-actor-model.md`
-- `docs/architecture/testing/hammer-doctrine.md`
-
-### Implementation Targets`r`n`r`nCompleted in the current checkpoint:`r`n- Added `scripts/hammer/hammer-source-capture.ps1` for source capture, source-items list, and events list invariants`r`n- Hardened search-performance hammer coverage to remove the old `$entityId` dependency`r`n- Fixed mutation strictness for `POST /api/source-items/capture` and `POST /api/seo/search-performance/ingest``r`n- Tightened weak SKIPs that were masking seeded local-data assertions`r`n- Quarantined retired `hammer-core.ps1` under `old/``r`n`r`nRemaining Phase 2 focus:`r`n- Review remaining observatory-floor hammer coverage for any still-weak SKIPs or setup assumptions`r`n- Keep provider-dependent and real data-threshold SKIPs explicit and honest`r`n- Preserve 0 FAIL full-coordinator status while tightening only in-bounds observability checks
-
-### Hammer Validation
-
-- Extend `hammer-project-bootstrap.ps1` only where project partitioning / context rules are the real concern
-- Add a focused observatory-floor hammer module if needed (for example `hammer-source-capture.ps1`)
-- Full coordinator must remain at 0 FAIL
-
-### Exit Criteria`r`n`r`n- Observatory floor coverage is explicit and architecture-aligned`r`n- No active hammer module depends on removed Wave 2D surfaces`r`n- Source capture + event invariants are hammer-tested directly`r`n- Mutation endpoints in this lane require explicit project context`r`n- Full coordinator remains at 0 FAIL
-
-### Legacy Replacement Mapping
-
-This phase removes residual confidence gaps rather than adding new observability boundaries.
+## Phase 2 — Observatory Floor Hammer Hardening`r`n`r`n### Objective`r`n`r`nExpand and clean hammer coverage for the observatory floor surfaces so the active gate fully reflects current VEDA observability truth and no longer carries entity-era or blueprint-era assumptions.`r`n`r`n### Status`r`n`r`n**Complete**`r`n`r`n### System Scope`r`n`r`nVEDA`r`n`r`n### Surfaces / Lanes`r`n`r`n- `GET /api/source-items``r`n- `POST /api/source-items/capture``r`n- `GET /api/events``r`n- `POST /api/projects``r`n- `GET /api/projects``r`n- current project-context strictness tests`r`n- current observatory-floor mutation and read invariants`r`n`r`n### Source of Truth Docs`r`n`r`n- `docs/systems/veda/observatory/observation-ledger.md``r`n- `docs/systems/veda/observatory/ingest-discipline.md``r`n- `docs/systems/veda/observatory/source-capture-and-inbox.md``r`n- `docs/systems/veda/observatory/event-auditability.md``r`n- `docs/systems/veda/observatory/EVENT-VOCABULARY.md``r`n- `docs/SYSTEM-INVARIANTS.md``r`n- `docs/architecture/architecture/security/auth-and-actor-model.md``r`n- `docs/architecture/testing/hammer-doctrine.md``r`n`r`n### Outcome`r`n`r`nCompleted in this phase:`r`n- added `scripts/hammer/hammer-source-capture.ps1` for direct observatory-floor coverage`r`n- fixed `src/app/api/source-items/capture/route.ts` to use project-scoped `(projectId, url)` lookup semantics`r`n- enforced strict project context on mutation routes for source capture and search-performance ingest`r`n- hardened `hammer-seo.ps1` to remove stale `$entityId` assumptions from search-performance tests`r`n- tightened weak SKIPs in observability lanes where local seeded data already made real assertions possible`r`n- quarantined retired `hammer-core.ps1` under `old/hammer-core.ps1``r`n`r`nValidated by latest full coordinator run:`r`n- **PASS:** 678`r`n- **FAIL:** 0`r`n- **SKIP:** 12`r`n`r`n### Exit Criteria`r`n`r`nMet.`r`n`r`n### Legacy Replacement Mapping`r`n`r`nThis phase removed residual confidence gaps rather than adding new observability boundaries.
 
 ---
 
@@ -613,7 +568,7 @@ Phase 0  Hammer Baseline Validation        [complete]
 Phase 1  VEDA Brain Route Reconstruction   [complete]
   │
   ▼
-Phase 2  Observatory Floor Hammer Hardening [active]
+Phase 2  Observatory Floor Hammer Hardening [complete]
   │
   ▼
 Phase 3  MCP Tool Surface Alignment        [pending]
@@ -728,4 +683,5 @@ eliminate dependency on C:\dev\veda
 ```
 
 When Phase 7 completes, the legacy repo must no longer be required for any operation.
+
 
