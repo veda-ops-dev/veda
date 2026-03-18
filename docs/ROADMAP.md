@@ -48,21 +48,11 @@ The clean repo has now reached a validated full-hammer checkpoint aligned to pos
 - `GET /api/projects` returns `200`
 - Prisma client, env, and DB connectivity are working
 - Hammer bootstrap works (`hammer_setup`)
-- Full coordinator `scripts/api-hammer.ps1` passes with **0 FAIL**
-- Current full baseline:
-  - **PASS:** 637
-  - **FAIL:** 0
-  - **SKIP:** 14
-- Modular hammer structure is in place
+- Full coordinator `scripts/api-hammer.ps1` passes with **0 FAIL**`r`n- Current full baseline:`r`n  - **PASS:** 677`r`n  - **FAIL:** 0`r`n  - **SKIP:** 13`r`n- Modular hammer structure is in place
 - SERP disturbances lane is hardened and validated
-- VEDA Brain routes are present and passing
-- Stale Wave 2D residue was removed from the active hammer gate
+- VEDA Brain routes are present and passing`r`n- Stale Wave 2D residue was removed from the active hammer gate`r`n- Observatory-floor hammer coverage now includes source capture and events`r`n- Mutation strictness is enforced for search-performance ingest and source-item capture`r`n- Weak hammer skips were tightened where seeded local data already exists
 
-### Latest checkpoint commit
-
-```text
-hammer alignment: remove stale Wave 2D surfaces (entities, audits, draft-artifacts, blueprint, quotable-blocks); enforce observability-only VEDA; clean Phase 0 baseline (637 PASS / 0 FAIL)
-```
+### Latest checkpoint commit`r`n`r`n```text`r`nroadmap + cleanup alignment: Phase 0/1 complete, hammer realigned to Wave 2D observability-only VEDA, baseline recorded (637 PASS / 0 FAIL / 14 SKIP)`r`n```
 
 This commit is already pushed to `origin/main`.
 
@@ -134,17 +124,9 @@ Runtime working. Prisma + DB working. Hammer working.
 
 #### Hammer Suite
 - `scripts/api-hammer.ps1` — coordinator aligned to active VEDA surfaces
-- `scripts/hammer/` — hammer modules for active observability surfaces (seo, sil2–sil11+briefing, feature-history, feature-volatility, domain-dominance, intent-drift, serp-similarity, change-classification, event-timeline, event-causality, dataforseo-ingest, realdata-fixtures, keyword-overview, page-command-center, sil16–sil22-24, content-graph-phase1, content-graph-intelligence, veda-brain-phase1, project-bootstrap, veda-brain-proposals, w5-persistence)
+- `scripts/hammer/` — hammer modules for active observability surfaces (seo, sil2–sil11+briefing, feature-history, feature-volatility, domain-dominance, intent-drift, serp-similarity, change-classification, event-timeline, event-causality, dataforseo-ingest, realdata-fixtures, keyword-overview, page-command-center, sil16–sil22-24, content-graph-phase1, content-graph-intelligence, veda-brain-phase1, project-bootstrap, veda-brain-proposals, w5-persistence, source-capture)
 
-### Known cleanup resolution
-
-The following were removed from the active hammer gate because they are not valid post-Wave-2D VEDA surfaces:
-
-- `hammer-core.ps1` legacy entity / audits / draft-artifacts / promotion expectations
-- blueprint workflow tests from `hammer-project-bootstrap.ps1`
-- quotable-block tests from `hammer-seo.ps1`
-
-These were stale residue, not implementation gaps.
+### Known cleanup resolution`r`n`r`nThe following were removed from the active hammer gate because they are not valid post-Wave-2D VEDA surfaces:`r`n`r`n- `hammer-core.ps1` legacy entity / audits / draft-artifacts / promotion expectations`r`n- blueprint workflow tests from `hammer-project-bootstrap.ps1``r`n- quotable-block tests from `hammer-seo.ps1``r`n`r`nThese were stale residue, not implementation gaps.`r`n`r`nAdditional Phase 2.5 hardening outcomes:`r`n`r`n- `scripts/hammer/hammer-source-capture.ps1` now covers source capture, source-items list, and events list invariants`r`n- `src/app/api/source-items/capture/route.ts` now resolves existing items by the project-scoped `(projectId, url)` uniqueness invariant`r`n- `src/app/api/source-items/capture/route.ts` and `src/app/api/seo/search-performance/ingest/route.ts` now use strict project resolution for mutation discipline`r`n- stale `hammer-core.ps1` has been quarantined under `old/hammer-core.ps1``r`n- skip discipline was tightened so seeded local-data assertions now produce PASS/FAIL where appropriate instead of weak SKIPs
 
 ### Legacy repo: `C:\dev\veda` (reference only)
 
@@ -252,9 +234,9 @@ Confirm every carried-forward active VEDA surface in the clean repo passes its h
 
 - Full coordinator run completes with **0 FAIL**
 - Baseline snapshot recorded:
-  - **PASS:** 637
+  - **PASS:** 677
   - **FAIL:** 0
-  - **SKIP:** 14
+  - **SKIP:** 13
 - Stale Wave 2D residue removed from the active hammer gate
 - Full hammer now reflects current VEDA truth instead of inherited mixed-era assumptions
 
@@ -301,9 +283,7 @@ Met.
 
 Expand and clean hammer coverage for the observatory floor surfaces so the active gate fully reflects current VEDA observability truth and no longer carries entity-era or blueprint-era assumptions.
 
-### Status
-
-**Active**
+### Status`r`n`r`n**Active**
 
 ### System Scope
 
@@ -330,12 +310,7 @@ VEDA
 - `docs/architecture/architecture/security/auth-and-actor-model.md`
 - `docs/architecture/testing/hammer-doctrine.md`
 
-### Implementation Targets
-
-- Review remaining observatory-floor hammer coverage for gaps now that stale surfaces are removed
-- Add tests for: source-item cross-project non-disclosure, capture EventLog atomicity, event log deterministic ordering, project-scoped event filtering, invalid capture rejection
-- Resolve the current search-performance skip dependency on old `$entityId` seeding if that can be done without reintroducing removed surfaces
-- Introduce a new focused hammer module only if existing modules cannot support this cleanly
+### Implementation Targets`r`n`r`nCompleted in the current checkpoint:`r`n- Added `scripts/hammer/hammer-source-capture.ps1` for source capture, source-items list, and events list invariants`r`n- Hardened search-performance hammer coverage to remove the old `$entityId` dependency`r`n- Fixed mutation strictness for `POST /api/source-items/capture` and `POST /api/seo/search-performance/ingest``r`n- Tightened weak SKIPs that were masking seeded local-data assertions`r`n- Quarantined retired `hammer-core.ps1` under `old/``r`n`r`nRemaining Phase 2 focus:`r`n- Review remaining observatory-floor hammer coverage for any still-weak SKIPs or setup assumptions`r`n- Keep provider-dependent and real data-threshold SKIPs explicit and honest`r`n- Preserve 0 FAIL full-coordinator status while tightening only in-bounds observability checks
 
 ### Hammer Validation
 
@@ -343,12 +318,7 @@ VEDA
 - Add a focused observatory-floor hammer module if needed (for example `hammer-source-capture.ps1`)
 - Full coordinator must remain at 0 FAIL
 
-### Exit Criteria
-
-- Observatory floor coverage is explicit and architecture-aligned
-- No active hammer module depends on removed Wave 2D surfaces
-- Source capture + event invariants are hammer-tested directly
-- Full coordinator remains at 0 FAIL
+### Exit Criteria`r`n`r`n- Observatory floor coverage is explicit and architecture-aligned`r`n- No active hammer module depends on removed Wave 2D surfaces`r`n- Source capture + event invariants are hammer-tested directly`r`n- Mutation endpoints in this lane require explicit project context`r`n- Full coordinator remains at 0 FAIL
 
 ### Legacy Replacement Mapping
 
@@ -477,9 +447,7 @@ Replaces: `C:\dev\veda\src\app\api\seo\ingest\`, `C:\dev\veda\scripts\fixtures\`
 
 Ensure all active documentation in the clean repo reflects clean repo truth. Remove stale legacy references. Confirm doc paths referenced in this roadmap and in code comments resolve correctly.
 
-### Status
-
-**Active**
+### Status`r`n`r`n**Active**
 
 ### System Scope
 
@@ -497,14 +465,7 @@ VEDA (documentation layer, all bounded systems referenced)
 - `docs/architecture/V_ECOSYSTEM.md`
 - `docs/SYSTEM-INVARIANTS.md`
 
-### Immediate documentation updates required by current repo reality
-
-- Update roadmap phase status and current execution anchor to reflect:
-  - Phase 0 complete
-  - Phase 1 complete
-  - full hammer at 637 PASS / 0 FAIL / 14 SKIP
-  - stale Wave 2D hammer residue removed from the active gate
-- Update cleanup intelligence layer to record the hammer realignment and removal of stale blueprint / entity / draft-artifact / quotable-block enforcement from active VEDA validation
+### Immediate documentation updates required by current repo reality`r`n`r`n- Update roadmap phase status and current execution anchor to reflect:`r`n  - Phase 0 complete`r`n  - Phase 1 complete`r`n  - full hammer at 677 PASS / 0 FAIL / 13 SKIP`r`n  - stale Wave 2D hammer residue removed from the active gate`r`n  - observatory-floor hammer hardening checkpoint applied`r`n- Update cleanup intelligence layer to record the hammer realignment and removal of stale blueprint / entity / draft-artifact / quotable-block enforcement from active VEDA validation
 
 ### Remaining implementation targets
 
@@ -767,3 +728,4 @@ eliminate dependency on C:\dev\veda
 ```
 
 When Phase 7 completes, the legacy repo must no longer be required for any operation.
+

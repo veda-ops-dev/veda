@@ -129,22 +129,21 @@ try {
         Write-Host ("  FAIL (persist got " + $resp.StatusCode + ")") -ForegroundColor Red; Hammer-Record FAIL
     } else {
         $d = ($resp.Content | ConvertFrom-Json).data
-        # Verify via audit/event-log endpoint if available
-        $evtResp = try {
-            Invoke-WebRequest -Uri "$Base/api/audit?entityId=$($d.id)&limit=5" `
-                -Method GET -Headers $Headers -SkipHttpErrorCheck -TimeoutSec 30 -UseBasicParsing
-        } catch { $null }
-        if ($evtResp -and $evtResp.StatusCode -eq 200) {
+        # Verify EventLog via GET /api/events (the correct observatory events endpoint).
+        # The stale /api/audit path was replaced here — that route does not exist in VEDA.
+        # Uses same pattern as SC-2 in hammer-source-capture.ps1.
+        $evtResp = Invoke-WebRequest -Uri (Build-Url "/api/events" @{entityType="serpSnapshot"; entityId=$d.id; limit="5"}) `
+            -Method GET -Headers $Headers -SkipHttpErrorCheck -TimeoutSec 30 -UseBasicParsing
+        if ($evtResp.StatusCode -eq 200) {
             $evtData = ($evtResp.Content | ConvertFrom-Json).data
             $found = $evtData | Where-Object { $_.eventType -eq "SERP_SNAPSHOT_RECORDED" -and $_.entityId -eq $d.id }
-            if ($found) {
+            if ($null -ne $found) {
                 Write-Host "  PASS" -ForegroundColor Green; Hammer-Record PASS
             } else {
-                Write-Host "  FAIL (EventLog entry not found for entityId)" -ForegroundColor Red; Hammer-Record FAIL
+                Write-Host "  FAIL (SERP_SNAPSHOT_RECORDED event not found for entityId=$($d.id))" -ForegroundColor Red; Hammer-Record FAIL
             }
         } else {
-            # Audit endpoint may not be available — test the write, skip the read-back
-            Write-Host "  SKIP (audit endpoint not available for EventLog verification)" -ForegroundColor DarkYellow; Hammer-Record SKIP
+            Write-Host ("  FAIL (events GET returned " + $evtResp.StatusCode + ")") -ForegroundColor Red; Hammer-Record FAIL
         }
     }
 } catch { Write-Host ("  FAIL (exception: " + $_.Exception.Message + ")") -ForegroundColor Red; Hammer-Record FAIL }

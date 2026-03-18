@@ -194,8 +194,12 @@ try {
                     Write-Host "  FAIL (dims=$activeDims but trend=stable)" -ForegroundColor Red; Hammer-Record FAIL
                 }
             } else {
-                # 0 dims -- possible if other keywords dilute the cluster ratios
-                Write-Host "  SKIP (no disturbance dims active -- other data may dilute)" -ForegroundColor DarkYellow; Hammer-Record SKIP
+                # 0 dims despite successful high-volatility setup.
+                # This means seeded rank shifts (1->18+) and feature changes did not fire any
+                # disturbance dimension. That is a signal failure, not a missing-data condition.
+                Write-Host ("  FAIL (setup succeeded but 0 disturbance dims active -- " +
+                    "volatilityCluster=$($d.volatilityCluster) featureShift=$($d.featureShiftDetected) " +
+                    "rankTurbulence=$($d.rankingTurbulence))") -ForegroundColor Red; Hammer-Record FAIL
             }
         } else { Write-Host ("  FAIL (got $($r.StatusCode))") -ForegroundColor Red; Hammer-Record FAIL }
     }

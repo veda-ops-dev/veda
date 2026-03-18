@@ -1461,3 +1461,35 @@ The SERP-disturbance hammer lane was also modularized so:
 - modularize oversized hammer lanes by concern without changing hammer mission
 
 ---
+
+## Phase 2.5 Hammer Hardening Resolution Notes
+
+### Resolution summary
+
+A follow-on hardening pass tightened the active hammer surface after the initial Wave 2D cleanup alignment.
+
+Completed outcomes:
+- scripts/hammer/hammer-source-capture.ps1 was added as an active observatory-floor module
+- source capture, source-items list, and events list invariants now have direct hammer coverage
+- src/app/api/source-items/capture/route.ts was corrected to use the project-scoped (projectId, url) lookup rather than a stale global-url assumption
+- mutation discipline was hardened by switching active mutation routes to esolveProjectIdStrict() where fallback-to-default project behavior was invalid
+- weak SKIPs were tightened where the hammer already seeded enough local data to make a real assertion
+- retired hammer-core.ps1 was quarantined under old/hammer-core.ps1 so it cannot quietly drift back into the active gate
+
+### Grounded ideas preserved
+- observatory-floor mutations deserve the same hammer seriousness as deeper SIL surfaces
+- weak SKIPs are a maintenance smell when local deterministic setup already exists
+- project context must be explicit for mutation endpoints; fallback is acceptable for selected read surfaces only
+- when a surface has already seeded deterministic local data, assertions should prefer PASS/FAIL over vague SKIP escape hatches
+- retired hammer residue should be physically quarantined, not merely removed from a coordinator list
+
+### Ideas explicitly rejected
+- using fallback project resolution for mutation endpoints just because early bootstrap behavior once allowed it
+- leaving stale hammer files in the active directory where future maintainers can accidentally resurrect them
+- hiding real seeded-data failures behind broad or lazy SKIP branches
+- treating provider-dependent SKIPs and locally-testable SKIPs as the same category
+
+### Active direction
+- keep remaining SKIPs honest: provider-dependent, environment-dependent, or genuinely richer-data-threshold constrained
+- continue Phase 2 tightening only where observability invariants can be strengthened without schema or endpoint drift
+- preserve the rule that hammer changes must improve truthfulness, not just total PASS count

@@ -13,7 +13,7 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { successResponse, badRequest, serverError } from "@/lib/api-response";
-import { resolveProjectId } from "@/lib/project";
+import { resolveProjectIdStrict } from "@/lib/project";
 import type { Prisma } from "@prisma/client";
 import {
   IngestSearchPerformanceSchema,
@@ -23,7 +23,7 @@ import { formatZodErrors } from "@/lib/zod-helpers";
 
 export async function POST(request: NextRequest) {
   try {
-    const { projectId, error } = await resolveProjectId(request);
+    const { projectId, error } = await resolveProjectIdStrict(request);
     if (error) {
       return badRequest(error);
     }
@@ -139,3 +139,4 @@ export async function POST(request: NextRequest) {
     return serverError();
   }
 }
+

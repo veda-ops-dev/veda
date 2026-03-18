@@ -1,26 +1,113 @@
 # hammer-seo.ps1 — search-performance, SIL-1, W5
 # Note: quotable-blocks section removed — QuotableBlock was removed from VEDA in Wave 2D.
+# Note: search-performance section rewritten — no longer depends on legacy $entityId.
+#       SearchPerformance.ingest is project-scoped only; entityId was never a required field.
 # Dot-sourced by api-hammer.ps1. Inherits all symbols from hammer-lib.ps1 + coordinator.
 
 Hammer-Section "SEO TESTS (SEARCH PERFORMANCE)"
 
-if (-not $entityId) {
-    Write-Host "Skipping SEO search-performance tests: no entities found" -ForegroundColor DarkYellow; Hammer-Record SKIP
-} else {
-    $spRunId = (Get-Date).Ticks
-    $searchPerfBody = @{
-        rows = @(@{ query="api-hammer-sp-$spRunId"; pageUrl="https://example.com/test-$spRunId"; impressions=100; clicks=10; ctr=0.1; avgPosition=3.5; dateStart="2026-02-01"; dateEnd="2026-02-07"; entityId=$entityId })
-    }
-    Test-PostJson "$Base/api/seo/search-performance/ingest" 200 "POST search-performance ingest (valid)"              $Headers $searchPerfBody
-    Test-PostJson "$Base/api/seo/search-performance/ingest" 400 "POST search-performance rejects clicks>impressions"  $Headers @{
-        rows = @(@{ query="test"; pageUrl="https://example.com/test"; impressions=10; clicks=20; ctr=2.0; avgPosition=1.0; dateStart="2026-02-01"; dateEnd="2026-02-07" })
-    }
-    if ($OtherHeaders.Count -gt 0) {
-        Test-PostJson "$Base/api/seo/search-performance/ingest" 404 "POST search-performance cross-project entity" $OtherHeaders $searchPerfBody
-    }
-    Test-ResponseEnvelope "$Base/api/seo/search-performance?limit=5"         $Headers "GET search-performance (list envelope)"   $true
-    Test-Endpoint "GET" "$Base/api/seo/search-performance?entityId=$entityId" 200 "GET search-performance entityId filter" $Headers
+$spRunId = (Get-Date).Ticks
+$spQuery  = "hammer-sp-$spRunId"
+$spUrl    = "https://example.com/sp-test-$spRunId"
+
+# SP-1: POST ingest with valid rows succeeds
+$spBody = @{
+    rows = @(
+        @{ query=$spQuery; pageUrl=$spUrl; impressions=1000; clicks=50; ctr=0.05; avgPosition=4.2; dateStart="2026-02-01"; dateEnd="2026-02-07" }
+    )
 }
+Test-PostJson "$Base/api/seo/search-performance/ingest" 200 "SP-1 POST search-performance ingest (valid)" $Headers $spBody
+
+# SP-2: POST ingest rejects clicks > impressions
+Test-PostJson "$Base/api/seo/search-performance/ingest" 400 "SP-2 POST search-performance rejects clicks>impressions" $Headers @{
+    rows = @(@{ query="test-$spRunId"; pageUrl="https://example.com/bad-$spRunId"; impressions=10; clicks=20; ctr=2.0; avgPosition=1.0; dateStart="2026-02-01"; dateEnd="2026-02-07" })
+}
+
+# SP-3: POST ingest without project context returns 400 (mutation strictness)
+try {
+    Write-Host "Testing: SP-3 POST search-performance ingest without project context returns 400" -NoNewline
+    $spJson = $spBody | ConvertTo-Json -Depth 5 -Compress
+    $resp = Invoke-WebRequest -Uri "$Base/api/seo/search-performance/ingest" -Method POST `
+        -Headers @{ "Content-Type" = "application/json" } `
+        -Body $spJson -SkipHttpErrorCheck -TimeoutSec 30 -UseBasicParsing
+    if ($resp.StatusCode -eq 400) { Write-Host "  PASS" -ForegroundColor Green; Hammer-Record PASS }
+    else { Write-Host ("  FAIL (got " + $resp.StatusCode + ", expected 400)") -ForegroundColor Red; Hammer-Record FAIL }
+} catch { Write-Host ("  FAIL (exception: " + $_.Exception.Message + ")") -ForegroundColor Red; Hammer-Record FAIL }
+
+# SP-4: GET search-performance returns valid list envelope
+Test-ResponseEnvelope "$Base/api/seo/search-performance?limit=5" $Headers "SP-4 GET search-performance (list envelope)" $true
+
+# SP-5: GET search-performance query filter returns only matching items
+try {
+    Write-Host "Testing: SP-5 GET search-performance query filter -> only matching items" -NoNewline
+    $resp = Invoke-WebRequest -Uri (Build-Url "/api/seo/search-performance" @{query=$spQuery;limit="20"}) -Method GET -Headers $Headers -SkipHttpErrorCheck -TimeoutSec 30 -UseBasicParsing
+    if ($resp.StatusCode -eq 200) {
+        $p = $resp.Content | ConvertFrom-Json
+        $allMatch = $true; $containsOurs = $false
+        foreach ($item in $p.data) {
+            if ($item.query -ne $spQuery) { $allMatch = $false }
+            if ($item.query -eq $spQuery)   { $containsOurs = $true }
+        }
+        if ($allMatch -and $containsOurs) { Write-Host "  PASS" -ForegroundColor Green; Hammer-Record PASS }
+        else { Write-Host "  FAIL (filter mismatch or item not found)" -ForegroundColor Red; Hammer-Record FAIL }
+    } else { Write-Host ("  FAIL (got " + $resp.StatusCode + ")") -ForegroundColor Red; Hammer-Record FAIL }
+} catch { Write-Host ("  FAIL (exception: " + $_.Exception.Message + ")") -ForegroundColor Red; Hammer-Record FAIL }
+
+# SP-6: GET search-performance invalid dateStart returns 400
+Test-Endpoint "GET" (Build-Url "/api/seo/search-performance" @{dateStart="not-a-date"}) 400 "SP-6 GET search-performance invalid dateStart -> 400" $Headers
+
+# SP-7: GET search-performance dateStart > dateEnd returns 400
+Test-Endpoint "GET" (Build-Url "/api/seo/search-performance" @{dateStart="2026-12-31";dateEnd="2026-01-01"}) 400 "SP-7 GET search-performance dateStart>dateEnd -> 400" $Headers
+
+# SP-8: GET search-performance ordering is deterministic (dateStart desc + id desc tiebreak)
+try {
+    Write-Host "Testing: SP-8 GET search-performance ordering deterministic" -NoNewline
+    $o1 = Try-GetJson -Url "$Base/api/seo/search-performance?limit=20" -RequestHeaders $Headers
+    $o2 = Try-GetJson -Url "$Base/api/seo/search-performance?limit=20" -RequestHeaders $Headers
+    if ($o1 -and $o2 -and $o1.data -and $o2.data) {
+        $ids1 = $o1.data | ForEach-Object { $_.id }
+        $ids2 = $o2.data | ForEach-Object { $_.id }
+        $orderOk = ($ids1.Count -eq $ids2.Count)
+        if ($orderOk) { for ($i = 0; $i -lt $ids1.Count; $i++) { if ($ids1[$i] -ne $ids2[$i]) { $orderOk = $false; break } } }
+        if ($orderOk) { Write-Host "  PASS" -ForegroundColor Green; Hammer-Record PASS }
+        else { Write-Host "  FAIL (ordering not deterministic between calls)" -ForegroundColor Red; Hammer-Record FAIL }
+    } else { Write-Host "  SKIP (no search-performance records to order)" -ForegroundColor DarkYellow; Hammer-Record SKIP }
+} catch { Write-Host ("  FAIL (exception: " + $_.Exception.Message + ")") -ForegroundColor Red; Hammer-Record FAIL }
+
+# SP-9: POST ingest cross-project isolation — same row ingested into project B stays isolated
+if ($OtherHeaders.Count -gt 0) {
+    $spCrossBody = @{
+        rows = @(
+            @{ query="cross-sp-$spRunId"; pageUrl="https://example.com/cross-$spRunId"; impressions=200; clicks=5; ctr=0.025; avgPosition=8.0; dateStart="2026-02-01"; dateEnd="2026-02-07" }
+        )
+    }
+    Test-PostJson "$Base/api/seo/search-performance/ingest" 200 "SP-9a POST search-performance ingest into project A" $Headers      $spCrossBody
+    Test-PostJson "$Base/api/seo/search-performance/ingest" 200 "SP-9b POST search-performance ingest into project B" $OtherHeaders $spCrossBody
+
+    try {
+        Write-Host "Testing: SP-9c GET search-performance cross-project isolation (project B cannot see project A rows)" -NoNewline
+        $resp = Invoke-WebRequest -Uri (Build-Url "/api/seo/search-performance" @{query=$spQuery;limit="20"}) -Method GET -Headers $OtherHeaders -SkipHttpErrorCheck -TimeoutSec 30 -UseBasicParsing
+        if ($resp.StatusCode -eq 200) {
+            $p = $resp.Content | ConvertFrom-Json
+            $leaked = $false
+            foreach ($item in $p.data) { if ($item.query -eq $spQuery) { $leaked = $true; break } }
+            if (-not $leaked) { Write-Host "  PASS" -ForegroundColor Green; Hammer-Record PASS }
+            else { Write-Host "  FAIL (project A rows visible to project B)" -ForegroundColor Red; Hammer-Record FAIL }
+        } else { Write-Host ("  FAIL (got " + $resp.StatusCode + ")") -ForegroundColor Red; Hammer-Record FAIL }
+    } catch { Write-Host ("  FAIL (exception: " + $_.Exception.Message + ")") -ForegroundColor Red; Hammer-Record FAIL }
+}
+
+# SP-10: POST ingest is idempotent (upsert — second POST with same composite key returns 200)
+try {
+    Write-Host "Testing: SP-10 POST search-performance ingest idempotent (upsert)" -NoNewline
+    $spJson = $spBody | ConvertTo-Json -Depth 5 -Compress
+    $resp = Invoke-WebRequest -Uri "$Base/api/seo/search-performance/ingest" -Method POST -Headers $Headers -Body $spJson -ContentType "application/json" -SkipHttpErrorCheck -TimeoutSec 30 -UseBasicParsing
+    if ($resp.StatusCode -eq 200) {
+        $d = $resp.Content | ConvertFrom-Json
+        if ($d.data -ne $null -and $d.data.ok -eq $true -and $d.data.rowCount -ge 1) { Write-Host "  PASS" -ForegroundColor Green; Hammer-Record PASS }
+        else { Write-Host "  FAIL (unexpected response shape)" -ForegroundColor Red; Hammer-Record FAIL }
+    } else { Write-Host ("  FAIL (got " + $resp.StatusCode + ")") -ForegroundColor Red; Hammer-Record FAIL }
+} catch { Write-Host ("  FAIL (exception: " + $_.Exception.Message + ")") -ForegroundColor Red; Hammer-Record FAIL }
 
 # SEO TESTS (QUOTABLE BLOCKS) removed.
 # QuotableBlock was intentionally removed from VEDA in Wave 2D.
@@ -157,15 +244,24 @@ try {
 
 try {
     Write-Host "Testing: GET serp-snapshots includePayload=true -> rawPayload present" -NoNewline
-    $resp = Invoke-WebRequest -Uri (Build-Url "/api/seo/serp-snapshots" @{includePayload="true";limit="5"}) -Method GET -Headers $Headers -SkipHttpErrorCheck -TimeoutSec 30 -UseBasicParsing
-    if ($resp.StatusCode -eq 200) {
-        $p = $resp.Content | ConvertFrom-Json
-        if ($p.data.Count -eq 0) { Write-Host "  SKIP (no snapshots)" -ForegroundColor DarkYellow; Hammer-Record SKIP } else {
-            $present = $true
-            foreach ($item in $p.data) { $props = $item | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name; if (-not ($props -contains "rawPayload")) { $present=$false; break } }
-            if ($present) { Write-Host "  PASS" -ForegroundColor Green; Hammer-Record PASS } else { Write-Host "  FAIL (rawPayload absent when includePayload=true)" -ForegroundColor Red; Hammer-Record FAIL }
-        }
-    } else { Write-Host ("  FAIL (got " + $resp.StatusCode + ", expected 200)") -ForegroundColor Red; Hammer-Record FAIL }
+    if (-not $ssResult.ok) {
+        # The snapshot was not created earlier in this run, so there is nothing to assert against.
+        # This is a legitimate chain-dependency skip.
+        Write-Host "  SKIP (no seeded snapshot from earlier POST)" -ForegroundColor DarkYellow; Hammer-Record SKIP
+    } else {
+        # Scope to the seeded query so the result set is guaranteed non-empty.
+        $resp = Invoke-WebRequest -Uri (Build-Url "/api/seo/serp-snapshots" @{includePayload="true";query=$ssNormalizedQuery;limit="5"}) -Method GET -Headers $Headers -SkipHttpErrorCheck -TimeoutSec 30 -UseBasicParsing
+        if ($resp.StatusCode -eq 200) {
+            $p = $resp.Content | ConvertFrom-Json
+            if ($p.data.Count -eq 0) {
+                Write-Host "  FAIL (query-scoped filter returned 0 results despite seeded snapshot)" -ForegroundColor Red; Hammer-Record FAIL
+            } else {
+                $present = $true
+                foreach ($item in $p.data) { $props = $item | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name; if (-not ($props -contains "rawPayload")) { $present=$false; break } }
+                if ($present) { Write-Host "  PASS" -ForegroundColor Green; Hammer-Record PASS } else { Write-Host "  FAIL (rawPayload absent when includePayload=true)" -ForegroundColor Red; Hammer-Record FAIL }
+            }
+        } else { Write-Host ("  FAIL (got " + $resp.StatusCode + ", expected 200)") -ForegroundColor Red; Hammer-Record FAIL }
+    }
 } catch { Write-Host ("  FAIL (exception: " + $_.Exception.Message + ")") -ForegroundColor Red; Hammer-Record FAIL }
 
 Test-Endpoint "GET" (Build-Url "/api/seo/serp-snapshots" @{from="badvalue"})    400 "GET serp-snapshots from=badvalue -> 400"          $Headers
@@ -325,3 +421,4 @@ if ($OtherHeaders.Count -gt 0) {
         }
     } catch { Write-Host ("  FAIL (exception: " + $_.Exception.Message + ")") -ForegroundColor Red; Hammer-Record FAIL }
 }
+

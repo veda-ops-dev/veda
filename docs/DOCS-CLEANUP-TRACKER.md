@@ -52,25 +52,14 @@ Completed changes:
 - `scripts/hammer/hammer-project-bootstrap.ps1` no longer contains blueprint workflow expectations
 - `scripts/hammer/hammer-seo.ps1` no longer contains quotable-block expectations
 - stale entity / audits / draft-artifact / promotion / blueprint / quotable-block expectations are no longer part of the active VEDA gate
-- full coordinator baseline after alignment is now:
-  - **PASS:** 637
-  - **FAIL:** 0
-  - **SKIP:** 14
+- full coordinator baseline after alignment is now:`r`n  - **PASS:** 677`r`n  - **FAIL:** 0`r`n  - **SKIP:** 13
 
 Interpretation:
 - the hammer now reflects active VEDA observability truth instead of inherited mixed-era residue
 - blueprint workflow remains outside VEDA ownership and must not be reintroduced here
 - stale hammer expectations are now classified as resolved cleanup residue, not pending implementation gaps
 
-### Roadmap state update
-
-`docs/ROADMAP.md` has been updated to reflect:
-- Phase 0 complete
-- Phase 1 complete
-- Phase 2 active
-- Phase 5 active
-- current execution anchor updated to the 637 / 0 / 14 full-hammer checkpoint
-- stale Wave 2D residue removal recorded as a current-reality resolution
+### Roadmap state update`r`n`r`n`docs/ROADMAP.md` has been updated to reflect:`r`n- Phase 0 complete`r`n- Phase 1 complete`r`n- Phase 2 active`r`n- Phase 5 active`r`n- current execution anchor updated to the 677 / 0 / 13 full-hammer checkpoint`r`n- stale Wave 2D residue removal recorded as a current-reality resolution`r`n- observatory-floor hammer hardening and strict mutation resolution recorded as current repo reality`r`n`r`n### Phase 2.5 hardening checkpoint`r`n`r`nCompleted changes:`r`n- new `scripts/hammer/hammer-source-capture.ps1` added to the active hammer gate`r`n- `src/app/api/source-items/capture/route.ts` fixed to respect project-scoped `(projectId, url)` uniqueness`r`n- `src/app/api/source-items/capture/route.ts` and `src/app/api/seo/search-performance/ingest/route.ts` switched to `resolveProjectIdStrict()` for mutation discipline`r`n- weak skip paths in `hammer-seo.ps1`, `hammer-w5-persistence.ps1`, `hammer-sil19.ps1`, and `hammer-source-capture.ps1` were tightened into real PASS/FAIL checks where local seeded data already exists`r`n- retired `scripts/hammer/hammer-core.ps1` moved to `old/hammer-core.ps1``r`n`r`nInterpretation:`r`n- Phase 2 is no longer just about adding coverage; it now includes skip-discipline hardening`r`n- remaining SKIPs are expected to be provider-dependent, environment-dependent, or genuine richer-data-threshold conditions`r`n- the active hammer surface is cleaner, stricter, and less vulnerable to stale assumptions
 
 ---
 
@@ -300,5 +289,5 @@ Until then, it is only reviewed/classified — not finished.
 - `scripts/hammer/hammer-sil22-24.ps1` now remains a thin coordinator and composes focused modules under `scripts/hammer/serp-disturbances/`
 - this modularization is intentional maintenance work, not a change in hammer mission
 - hammer purpose remains invariant protection for live operational surfaces, especially DB integrity, route-contract integrity, read-only guarantees, and project isolation
-- active hammer gate now explicitly excludes stale Wave 2D residue (`hammer-core.ps1`, blueprint enforcement, quotable-blocks enforcement)
-- current full active baseline: **637 PASS / 0 FAIL / 14 SKIP**
+- active hammer gate now explicitly excludes stale Wave 2D residue (`hammer-core.ps1`, blueprint enforcement, quotable-blocks enforcement)`r`n- retired `hammer-core.ps1` is quarantined under `old/hammer-core.ps1` rather than left in the active hammer directory`r`n- current full active baseline: **677 PASS / 0 FAIL / 13 SKIP**
+

@@ -15,17 +15,16 @@ import {
   createdResponse,
   successResponse,
   badRequest,
-  conflict,
   serverError,
 } from "@/lib/api-response";
 import { generateContentHash } from "@/lib/validation";
-import { resolveProjectId } from "@/lib/project";
+import { resolveProjectIdStrict } from "@/lib/project";
 import { CaptureSourceItemSchema } from "@/lib/schemas/source-item";
 import { formatZodErrors } from "@/lib/zod-helpers";
 
 export async function POST(request: NextRequest) {
   try {
-    const { projectId, error } = await resolveProjectId(request);
+    const { projectId, error } = await resolveProjectIdStrict(request);
     if (error) {
       return badRequest(error);
     }
@@ -48,19 +47,15 @@ export async function POST(request: NextRequest) {
 
     const data = parsed.data;
 
-    // --- Check for existing SourceItem with this URL ---
-    // NOTE: SourceItem.url is globally unique in the schema. Enforce project isolation explicitly.
+    // --- Check for existing SourceItem with this URL (project-scoped) ---
+    // NOTE: SourceItem URL uniqueness is project-scoped after migration 20260316000200.
+    // The composite unique index is (projectId, url). We look up within project scope only.
+    // A URL that exists in another project is simply not found here — no cross-project leakage.
     const existing = await prisma.sourceItem.findUnique({
-      where: { url: data.url },
+      where: { projectId_url: { projectId, url: data.url } },
     });
 
     if (existing) {
-      // If the URL exists but belongs to another project, do not mutate across projects.
-      if (existing.projectId !== projectId) {
-        // Preserve global uniqueness invariant without leaking cross-project existence
-        return conflict("URL already exists");
-      }
-
       // --- Recapture: URL already exists --- (transactional)
       await prisma.$transaction(async (tx) => {
         if (data.notes) {
@@ -149,3 +144,5 @@ export async function POST(request: NextRequest) {
     return serverError();
   }
 }
+
+
