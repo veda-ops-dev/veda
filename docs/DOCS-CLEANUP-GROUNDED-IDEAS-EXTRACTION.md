@@ -1630,3 +1630,25 @@ VS Code successor extension created at `extensions/veda-vscode/` per `docs/syste
 - Phase 6 is complete as a foundation
 - future extension work should follow the successor roadmap in `docs/systems/operator-surfaces/vscode/roadmap.md`
 - any new API surfaces required by future extension phases must satisfy endpoint rules independently
+---
+
+## Phase 7 Legacy Decommission
+
+### Resolution summary
+
+Audit confirmed zero active operational dependency on `C:\dev\veda`. All legacy path references in the clean repo are historical provenance or self-referential Phase 7 language. `ARCHIVED.md` placed in legacy repo root. Roadmap and cleanup tracker updated.
+
+### Grounded ideas preserved
+- legacy repo provenance should be retained, not destroyed — the CARRY_FORWARD_MANIFEST and archival marker are the right artifacts
+- decommission is about cutting dependency, not filesystem theater
+- historical references in docs are acceptable and useful; only active workflow dependencies are leaks
+
+### Ideas explicitly rejected
+- deleting or purging the legacy repo
+- rewriting history sections just because "legacy" appears
+- treating provenance references as active leaks
+
+### Active direction
+- Phase 7 is complete
+- `C:\dev\veda-ops-dev\veda` is the sole operational repository
+- legacy repo `C:\dev\veda` is explicitly archived with `ARCHIVED.md` in its root

@@ -173,3 +173,12 @@ These rules are part of the VEDA system invariants and must be preserved across 
 - Both surfaces use existing hammer-validated API routes
 - No new routes or schema were required
 - No endpoint rules or schema rules were triggered
+## Phase 7 legacy decommission
+
+- Active reference audit run across all clean repo files: src/, scripts/, mcp/, extensions/, all configs — 0 active code/script/config leaks
+- All 30 legacy path references in docs classified: historical provenance only or self-referential roadmap language
+- No active workflow dependency on `C:\dev\veda` found
+- `ARCHIVED.md` written to `C:\dev\veda` — explicit archival marker placed in legacy repo root
+- Legacy repo is now explicitly decommissioned; it is not renamed/deleted (provenance preserved), but it is marked non-operational
+- ROADMAP.md Phase 7 status updated to complete; sequencing summary updated
+- Clean repo is the sole operational repository

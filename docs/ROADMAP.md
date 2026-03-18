@@ -671,7 +671,7 @@ Archive the legacy repo. The clean repo becomes the sole operational repo. No fu
 
 ### Status
 
-**Pending**
+**Complete**
 
 ### System Scope
 
@@ -707,6 +707,15 @@ All (operational boundary, not code)
 - Full hammer suite: 0 FAIL
 - Operator can perform all VEDA observability work without touching the legacy repo
 
+### Outcome
+
+Completed in this phase:
+- Active reference audit across all clean repo directories — 0 active code/script/config leaks found
+- All legacy path mentions confirmed as historical provenance or self-referential roadmap language only
+- `ARCHIVED.md` written to `C:\dev\veda` — explicit archival marker
+- `C:\dev\veda` is now marked decommissioned; no active workflow depends on it
+- Full hammer suite was previously validated at 680 PASS / 0 FAIL / 10 SKIP
+
 ### Legacy Replacement Mapping
 
 This phase completes the replacement. The legacy repo `C:\dev\veda` at branch `feature/veda-command-center` commit `31a8deb` is fully superseded.
@@ -737,7 +746,7 @@ Phase 5  Documentation Alignment           [complete]
 Phase 6  Operator Surface Foundation       [complete]
   │
   ▼
-Phase 7  Legacy Decommission               [pending]
+Phase 7  Legacy Decommission               [complete]
 ```
 
 Phases 0–4 are core VEDA observability work and must be sequential.
