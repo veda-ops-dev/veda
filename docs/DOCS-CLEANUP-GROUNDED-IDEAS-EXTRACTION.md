@@ -14,7 +14,7 @@ The canonical truth remains:
 - `docs/architecture/V_ECOSYSTEM.md`
 - `docs/VEDA_WAVE_2D_CLOSEOUT.md`
 - `docs/SYSTEM-INVARIANTS.md`
-- `docs/architecture/veda/SCHEMA-REFERENCE.md`
+- `docs/architecture/architecture/veda/SCHEMA-REFERENCE.md`
 - `docs/systems/veda/observatory/EVENT-VOCABULARY.md`
 
 ---
@@ -390,7 +390,6 @@ These may survive, but often need relocation out of VEDA-only docs.
 - `docs/archive/v-forge-candidates/04-ADMIN-DASHBOARD-UI-CONTRACT.md`
 
 ---
-
 ### Source doc
 - path: `docs/operations-planning-api/05-VIDEO-SEO-WORKFLOW-CONTRACT.md`
 - current folder: `docs/operations-planning-api/`
@@ -432,7 +431,6 @@ These may survive, but often need relocation out of VEDA-only docs.
 - `docs/archive/v-forge-candidates/05-VIDEO-SEO-WORKFLOW-CONTRACT.md`
 
 ---
-
 ### Source doc
 - path: `docs/specs/COMPETITOR-CONTENT-OBSERVATORY.md`
 - current folder: `docs/specs/`
@@ -1405,7 +1403,7 @@ They split into three different future paths:
    - current state is intentionally legacy-reference only because it depends on archived historical lifecycle input
 
 3. `docs/First-run operator journey.md`
-   - preserve first-run recovery, empty-state, blueprint discoverability, environment orientation, and cross-panel continuity ideas
+   - preserve first-run recovery, empty-state teaching, blueprint discoverability, environment orientation, and cross-panel continuity ideas
    - this is the strongest candidate for a future active successor doc
    - recommended future target shape: a small operator-surface doc under `docs/systems/operator-surfaces/vscode/` rather than another root-level essay
 
@@ -1472,7 +1470,7 @@ Completed outcomes:
 - scripts/hammer/hammer-source-capture.ps1 was added as an active observatory-floor module
 - source capture, source-items list, and events list invariants now have direct hammer coverage
 - src/app/api/source-items/capture/route.ts was corrected to use the project-scoped (projectId, url) lookup rather than a stale global-url assumption
-- mutation discipline was hardened by switching active mutation routes to esolveProjectIdStrict() where fallback-to-default project behavior was invalid
+- mutation discipline was hardened by switching active mutation routes to resolveProjectIdStrict() where fallback-to-default project behavior was invalid
 - weak SKIPs were tightened where the hammer already seeded enough local data to make a real assertion
 - retired hammer-core.ps1 was quarantined under old/hammer-core.ps1 so it cannot quietly drift back into the active gate
 
@@ -1652,3 +1650,91 @@ Audit confirmed zero active operational dependency on `C:\dev\veda`. All legacy 
 - Phase 7 is complete
 - `C:\dev\veda-ops-dev\veda` is the sole operational repository
 - legacy repo `C:\dev\veda` is explicitly archived with `ARCHIVED.md` in its root
+---
+
+## Roadmap Consolidation
+
+### Resolution summary
+
+`docs/ROADMAP.md` consolidated from a phase-execution diary (phases 0–7, ~700 lines) into a post-reconstruction control surface (~250 lines). Phase detail compressed into short closeout summaries. Definition-of-done added. Future work separated from completed VEDA core.
+
+### Grounded ideas preserved
+- Definition-of-done criteria should be explicit and boring, not implicit in completed phase lists
+- Future optional enhancements must be separated from completed core — conflating them creates false urgency
+- Maintenance rules belong in the live control surface so they are not re-derived each time
+- System invariants and non-goals should remain visible even after reconstruction phases end
+- Provenance (legacy repo origin, carry-forward manifest) should be retained in condensed form
+
+### Ideas explicitly rejected
+- Inventing new build phases to keep the roadmap feeling alive
+- Treating optional enhancements (VS Code Phase 2+, additional MCP coverage) as unfinished VEDA core
+- Carrying forward intermediate checkpoint details and implementation target lists that no longer serve the live control surface
+
+### Active direction
+- Roadmap is now a maintenance-entry document
+- VEDA is operationally complete per the definition-of-done criteria
+- No blocking phases remain
+- Future VS Code and MCP work follows its own successor roadmap docs, not this document
+
+---
+
+## YouTube Observatory Successor Resolution Notes
+
+### Resolution summary
+
+A new successor doc set now exists at:
+- `docs/systems/veda/youtube-observatory/overview.md`
+- `docs/systems/veda/youtube-observatory/observatory-model.md`
+- `docs/systems/veda/youtube-observatory/ingest-discipline.md`
+- `docs/systems/veda/youtube-observatory/validation-doctrine.md`
+
+These docs establish the current truth posture for a possible YouTube lane inside VEDA.
+They define YouTube as an observability-only, search-first, project-scoped lane.
+They do not authorize publishing, planning, creator workflow, or execution ownership inside VEDA.
+
+### Grounded ideas preserved
+- YouTube can belong in VEDA only as a search/discovery observatory surface
+- the correct pattern remains entity + observation + time + interpretation
+- channel-first identity is the preferred observatory posture, with video-level observation included where present
+- provider/search snapshot evidence should remain the primary truth surface, with YouTube API used only as bounded enrichment where justified
+- identity normalization belongs at the ingest boundary, not as a later cleanup fantasy
+- doc placement and naming need successor discipline so the lane does not become another fossil pile
+
+### Ideas explicitly rejected
+- porting old YouTube planning docs forward as active truth
+- creating new root-level `VEDA-YOUTUBE-*.md` files
+- turning YouTube inside VEDA into publishing workflow, content ops, or creator-studio behavior
+- reviving removed schema concepts like owned `Video`, `MetricSnapshot`, or workflow-first SEO/video models as if they were still active
+- treating recommendation-surface ambition as a v1 requirement
+
+### Active direction
+- use the new successor docs above as the only active authority spine for this lane
+- treat legacy YouTube/SEO docs under `C:\dev\veda\docs` as salvage input only
+- any future schema or endpoint work for this lane must still satisfy the current schema rules, endpoint rules, and hammer doctrine independently
+
+## YouTube Observatory Y1 Payload Findings
+
+### Grounded facts confirmed by live payload evidence (2026-03-19)
+
+- DataForSEO YouTube Organic SERP returns a flat `items[]` array — no nested block structure
+- `channel_id` (UC-prefixed) is a direct field on every item type; channel-first identity is realizable at ingest without API calls
+- `video_id` (11-char) is a direct field on `youtube_video` items; no URL parsing required
+- `channel_url` uses `@handle` format; it is metadata only, not the canonical identity field
+- `timestamp` provides a computed absolute publish datetime; it is an approximation for videos older than ~24h
+- `publication_date` is a relative display string only — not canonical
+- `youtube_video` and `youtube_channel` items use different field names for the same concepts; normalizer must branch on `type`
+- `is_shorts`, `is_live`, `is_movie` are confirmed boolean fields on every `youtube_video` item
+- Item `url` fields contain tracking params and must not be used as identifiers
+- Video Info, Video Subtitles, and Video Comments endpoints are not Y1 surfaces
+
+### Still unverified
+- `youtube_playlist` item field shape and `playlist_id` delivery
+- `is_shorts: true` item field completeness
+- `block_name` with non-null values
+- Result-set variance across repeated captures of the same query
+
+### Ideas rejected
+- Using `channel_url` or display names as identity anchors
+- Treating `publication_date` relative strings as parseable canonical dates
+- Designing a block-level table (block structure is a flat annotation, not a nested truth surface)
+- Treating Video Info, Subtitles, or Comments as Y1 surfaces

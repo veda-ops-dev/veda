@@ -182,3 +182,56 @@ These rules are part of the VEDA system invariants and must be preserved across 
 - Legacy repo is now explicitly decommissioned; it is not renamed/deleted (provenance preserved), but it is marked non-operational
 - ROADMAP.md Phase 7 status updated to complete; sequencing summary updated
 - Clean repo is the sole operational repository
+## Roadmap consolidation — post-reconstruction
+
+- `docs/ROADMAP.md` rewritten from reconstruction execution diary to post-reconstruction control surface
+- Completed phases 0–7 compressed into short closeout summaries — outcomes preserved, implementation target lists removed
+- Definition-of-done section added as explicit operational criteria (8 criteria, all currently met)
+- Future work separated into: maintenance (apply when needed), optional bounded enhancements, belongs-outside-VEDA
+- Drift-bait removed: stale "immediate updates required" language, intermediate checkpoint detail, repeated target lists, duplicated phase scaffolding
+- Self-referential "eliminate dependency on C:\dev\veda" mission statement removed — that mission is complete
+- System invariants, non-goals, and implementation pattern preserved in condensed form
+- Provenance section added recording legacy repo origin coordinates
+- VEDA is operationally complete per explicit definition-of-done criteria
+
+## YouTube observatory successor docs
+
+- Added new successor doc set under `docs/systems/veda/youtube-observatory/`
+- Canonical doc names are now:
+  - `overview.md`
+  - `observatory-model.md`
+  - `ingest-discipline.md`
+  - `validation-doctrine.md`
+- These docs define YouTube inside VEDA as an observability-only lane, not a publishing, planning, or execution system
+- Placement rule established: future YouTube observatory docs belong only under `docs/systems/veda/youtube-observatory/`
+- Naming rule established: lowercase, hyphen-separated, functional successor names only; no new root-level `VEDA-YOUTUBE-*.md` fossils
+- Historical YouTube/SEO docs from `C:\dev\veda\docs` remain salvage input only, not active truth
+- This is a control-surface and doctrine addition; no schema or route authority was created by these docs alone
+
+## YouTube observatory Y1 research artifacts
+
+- Added `docs/systems/veda/youtube-observatory/Y1-RESEARCH-BRIEF.md` — bounded research brief defining five research buckets before schema/route design
+- Added `docs/systems/veda/youtube-observatory/Y1-STEP1-INSPECTION-REPORT.md` — Step 1 payload inspection report; documents live DataForSEO YouTube Organic SERP field truth
+- Added `docs/systems/veda/youtube-observatory/y1-payload-findings.md` — findings note recording confirmed and unverified payload facts from live inspection
+- Added `scripts/yt-payload-inspect.mjs` — inspection script for running remaining query sample passes; not production code
+- These are research-phase artifacts; no schema or route authority has been established yet
+- Placement rule followed: all YouTube observatory docs under `docs/systems/veda/youtube-observatory/` only
+
+## Owned-performance observatory successor docs
+
+- Added initial successor doc set under `docs/systems/veda/owned-performance/`
+- First-pass docs (existed prior): `overview.md`, `ga4-observatory.md`, `instrumentation-and-access.md`
+- Doctrine pack completed in this pass:
+  - `overview.md` — revised: authority chain updated, GSC explicitly noted as deferred companion lane, new lane docs listed
+  - `ga4-observatory.md` — revised: attribution model decision noted as required pre-schema step, observatory-model.md and ga4-research-brief.md cross-referenced
+  - `instrumentation-and-access.md` — revised: instrumentation.ts ≠ GA4 clarification added, @next/third-parties noted as official path, vedaops.dev proving surface note added, research brief cross-referenced
+  - `observatory-model.md` — created: entity model, observation model, joinability posture, time semantics, truth surface split, interpretation boundary, out-of-scope constraints
+  - `ingest-discipline.md` — created: operator-triggered default, project scoping, joinability posture at boundary, raw evidence vs promoted fields, time discipline, idempotency posture, event logging/atomicity
+  - `validation-doctrine.md` — created: hammer expectations, fixture-based vs live-source posture, PASS/FAIL/SKIP guidance, minimum v1 validation floor
+  - `ga4-research-brief.md` — created: six priority-ranked research buckets, failure modes, bounded research sequence before schema/route judgment
+- Placement rule in force: all owned-performance docs belong only under `docs/systems/veda/owned-performance/`
+- Naming rule in force: lowercase, hyphen-separated, functional names
+- Search Console is explicitly a deferred companion lane; no GSC docs until GA4 lane is doctrine-complete
+- No schema tables or route contracts were created by any of these docs
+- No live GA4 property has been accessed; the research brief defines what must happen before schema/route judgment is permitted
+- `https://www.vedaops.dev/` noted as a possible small-scope proving surface for instrumentation sanity and joinability confirmation
