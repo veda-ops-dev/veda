@@ -235,3 +235,18 @@ These rules are part of the VEDA system invariants and must be preserved across 
 - No schema tables or route contracts were created by any of these docs
 - No live GA4 property has been accessed; the research brief defines what must happen before schema/route judgment is permitted
 - `https://www.vedaops.dev/` noted as a possible small-scope proving surface for instrumentation sanity and joinability confirmation
+
+## YouTube observatory Y1 implementation-decision artifacts
+
+- Strict audit performed against all seven YouTube lane docs; readiness verdict: almost ready, blocked by two missing implementation-planning artifacts
+- Doctrine pack confirmed strong and internally consistent; payload research confirmed sufficient for schema design
+- Three new implementation-decision docs created:
+  - `docs/systems/veda/youtube-observatory/y1-schema-judgment.md` — pins the three-table shape (YtSearchTarget, YtSearchSnapshot, YtSearchElement), column decisions, uniqueness keys, EventLog integration, ingest route contract, and normalizer contract
+  - `docs/systems/veda/youtube-observatory/y1-hammer-story.md` — defines actual test cases across nine categories before route code exists: target-definition, snapshot ingest, element-row, project isolation, determinism/ordering, mixed-result-type, malformed input, read/write boundary, transaction atomicity
+  - `docs/systems/veda/youtube-observatory/y1-implementation-plan.md` — bounded eight-step implementation sequence with done criteria; subordinate to ROADMAP as optional bounded enhancement
+- Minor revision applied to `observatory-model.md`: Y1 identity posture note added (identity lives on element rows at Y1, not in a separate lookup table)
+- Minor revision applied to `Y1-RESEARCH-BRIEF.md`: status annotations added to all five research buckets reflecting resolution from payload inspection
+- Minimal ROADMAP.md update: one line added under Optional Bounded Enhancements referencing `y1-implementation-plan.md`
+- Placement rule followed: all new docs under `docs/systems/veda/youtube-observatory/` only
+- No application code written; no schema migration applied; no routes created
+- These are implementation-decision artifacts bridging doctrine/research to coding posture

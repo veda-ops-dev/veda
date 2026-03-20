@@ -1738,3 +1738,44 @@ They do not authorize publishing, planning, creator workflow, or execution owner
 - Treating `publication_date` relative strings as parseable canonical dates
 - Designing a block-level table (block structure is a flat annotation, not a nested truth surface)
 - Treating Video Info, Subtitles, or Comments as Y1 surfaces
+
+
+## YouTube Observatory Y1 Implementation-Decision Artifacts
+
+### Resolution summary
+
+A strict audit of all seven YouTube lane docs confirmed the doctrine pack is internally consistent, well-bounded, and aligned with the higher-order authority chain. Payload research is sufficient for schema design. Three implementation-decision docs were created to bridge doctrine/research into coding posture.
+
+New docs created:
+- `docs/systems/veda/youtube-observatory/y1-schema-judgment.md` — pins three-table schema (YtSearchTarget, YtSearchSnapshot, YtSearchElement), all column decisions, uniqueness keys, EventLog integration, ingest route contract, and normalizer contract
+- `docs/systems/veda/youtube-observatory/y1-hammer-story.md` — defines actual test cases across nine categories before route code exists
+- `docs/systems/veda/youtube-observatory/y1-implementation-plan.md` — bounded eight-step execution sequence
+
+### Grounded ideas preserved
+- The schema judgment artifact must pin table shapes, column types, uniqueness keys, the idempotency contract, and EventLog event types before code is written
+- The hammer story must define actual test cases before the route exists, not after
+- Y1 identity (channelId, videoId) lives on the element row, not in a separate lookup table — confirmed by payload evidence
+- De-risking query passes (playlist, Shorts, branded entity) validate the design rather than gate it
+- The implementation sequence is a straight line: schema judgment → hammer story → migration → normalizer → route → hammer → docs cleanup
+- ROADMAP.md needs only a minimal control-surface note, not a new phase block
+- `observedPublishedAt` is the safer field name for the computed vendor timestamp, documenting its approximate nature
+- `elementType` is a plain string, not a Prisma enum, to avoid migration churn when the vendor adds new type strings
+- Empty result sets are valid observations ("YouTube returned no results for this query") and should produce a snapshot with zero elements
+- `channelId` NOT NULL on elements is supported by payload evidence but carries a low-risk caveat for unverified `youtube_playlist` items
+
+### Ideas explicitly rejected
+- Creating a new numbered roadmap phase for YouTube
+- Treating de-risking query passes as schema-design blockers
+- Building a separate identity lookup table at Y1
+- Coupling enrichment to ingest at Y1
+- Turning the YouTube implementation plan into a new root-level planning doc
+- Adding read routes before the observation floor is hammer-validated
+- Creating a block-level table or treating block_name as a structural key
+- Using a Prisma enum for element type (would require migration for each new vendor type)
+
+### Active direction
+- Use the three implementation-decision docs as the active coding authority for Y1
+- Run de-risking query passes (playlist, Shorts) before or alongside migration to confirm channelId nullable decision
+- Implement in the sequence defined by `y1-implementation-plan.md`
+- Update SCHEMA-REFERENCE.md after migration is applied
+- No read routes until the observation floor passes the hammer
