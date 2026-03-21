@@ -136,6 +136,8 @@ If a future payload returns an item without `channel_id`, the normalizer must ha
 
 **Caution:** `youtube_playlist` items have not been live-verified. If playlist items lack `channel_id`, this column must be made nullable in the migration. The de-risking query pass should confirm this before or alongside migration.
 
+**Implementation note (first migration):** The first Y1 migration implements `channelId` as nullable (`String?`) as a conservative choice, since the playlist verification pass has not yet been completed. The NOT NULL recommendation above remains the target state; the column should be tightened to NOT NULL after playlist items are live-verified and confirmed to carry `channel_id`. This is the only intentional schema deviation from this document in the first implementation pass.
+
 ### Why `elementType` is a plain String, not an enum
 
 The vendor may add new type strings in future API versions. A Prisma enum would require a migration for each new type. A plain string column with application-level validation (Zod enum with `.catch()` fallthrough to store unrecognized types) is more resilient.

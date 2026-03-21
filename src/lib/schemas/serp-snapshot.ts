@@ -34,9 +34,10 @@ export const RecordSERPSnapshotSchema = z
     validAt: isoTimestampString.optional(),
     rawPayload: z.unknown(),
     payloadSchemaVersion: z.string().optional(),
-    aiOverviewStatus: z.enum(["present", "absent", "parse_error", "unknown"]).optional(),
+    aiOverviewStatus: z.enum(["present", "absent", "parse_error"]).optional(),
     aiOverviewText: z.string().optional(),
     source: z.enum(VALID_SOURCES),
     batchRef: z.string().optional(),
   })
   .strict();
+

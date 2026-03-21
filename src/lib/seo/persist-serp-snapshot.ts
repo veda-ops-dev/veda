@@ -16,7 +16,7 @@
  */
 
 import { prisma } from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
+import { Prisma, AiOverviewStatus } from "@prisma/client";
 
 // ---------------------------------------------------------------------------
 // Input / Output types
@@ -30,7 +30,7 @@ export interface PersistSerpSnapshotInput {
   capturedAt: Date;
   validAt: Date;
   rawPayload: Prisma.InputJsonValue;
-  aiOverviewStatus: string;
+  aiOverviewStatus: AiOverviewStatus;
   aiOverviewText: string | null;
   /** Metadata for EventLog details — not persisted on the snapshot itself */
   organicResultCount: number;
@@ -48,7 +48,7 @@ export interface PersistSerpSnapshotResult {
     device: string;
     capturedAt: Date;
     validAt: Date | null;
-    aiOverviewStatus: string;
+    aiOverviewStatus: AiOverviewStatus;
     source: string;
     batchRef: string | null;
     createdAt: Date;
@@ -148,3 +148,4 @@ export async function persistSerpSnapshot(
     throw err;
   }
 }
+

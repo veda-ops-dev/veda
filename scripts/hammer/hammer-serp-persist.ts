@@ -24,7 +24,7 @@
  *   - Project isolation: persistence function respects projectId boundary
  */
 
-import { PrismaClient, Prisma } from "@prisma/client";
+import { PrismaClient, Prisma, AiOverviewStatus } from "@prisma/client";
 import { persistSerpSnapshot } from "@/lib/seo/persist-serp-snapshot";
 
 const prisma = new PrismaClient();
@@ -78,7 +78,7 @@ function makeInput(overrides: Partial<Parameters<typeof persistSerpSnapshot>[0]>
     capturedAt,
     validAt: capturedAt,
     rawPayload: { results: [{ url: "https://example.com", rank: 1 }] } as Prisma.InputJsonValue,
-    aiOverviewStatus: "absent",
+    aiOverviewStatus: AiOverviewStatus.absent,
     aiOverviewText: null,
     organicResultCount: 1,
     aiOverviewPresent: false,
@@ -231,7 +231,7 @@ async function runTests() {
         normalizedQuery: `hammer persist fields ${runId}`,
         capturedAt,
         validAt,
-        aiOverviewStatus: "present",
+        aiOverviewStatus: AiOverviewStatus.present,
         aiOverviewText: "Test AI overview text",
       });
       const result = await persistSerpSnapshot(input);

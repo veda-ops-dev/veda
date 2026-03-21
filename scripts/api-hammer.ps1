@@ -57,6 +57,7 @@ $_parseTargets = @(
     "$PSScriptRoot\hammer\hammer-veda-brain-proposals.ps1"
     "$PSScriptRoot\hammer\hammer-w5-persistence.ps1"
     "$PSScriptRoot\hammer\hammer-source-capture.ps1"
+    "$PSScriptRoot\hammer\hammer-youtube-y1.ps1"
 )
 foreach ($_pt in $_parseTargets) {
     $_tokens = $null
@@ -182,6 +183,7 @@ $entityId = $null
 . "$PSScriptRoot\hammer\hammer-veda-brain-proposals.ps1"
 . "$PSScriptRoot\hammer\hammer-w5-persistence.ps1"
 . "$PSScriptRoot\hammer\hammer-source-capture.ps1"
+. "$PSScriptRoot\hammer\hammer-youtube-y1.ps1"
 
 # ── Summary ────────────────────────────────────────────────────────────────────
 Write-Host ""
@@ -191,4 +193,3 @@ Write-Host ("FAIL: " + $script:FailCount) -ForegroundColor Red
 Write-Host ("SKIP: " + $script:SkipCount) -ForegroundColor DarkYellow
 
 if ($script:FailCount -eq 0) { exit 0 } else { exit 1 }
-

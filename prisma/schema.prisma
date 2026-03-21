@@ -75,6 +75,8 @@ enum EntityType {
   cgPageTopic
   cgPageEntity
   vedaProject
+  ytSearchTarget
+  ytSearchSnapshot
 }
 
 // EventType — observatory-scoped audit events
@@ -95,6 +97,8 @@ enum EventType {
   CG_SCHEMA_USAGE_CREATED
   CG_PAGE_TOPIC_CREATED
   CG_PAGE_ENTITY_CREATED
+  YT_SEARCH_TARGET_CREATED
+  YT_SEARCH_SNAPSHOT_RECORDED
 }
 
 enum ActorType {
@@ -178,6 +182,10 @@ model Project {
   cgSchemaUsages           CgSchemaUsage[]
   cgPageTopics             CgPageTopic[]
   cgPageEntities           CgPageEntity[]
+  // YouTube Search Observatory
+  ytSearchTargets          YtSearchTarget[]
+  ytSearchSnapshots        YtSearchSnapshot[]
+  ytSearchElements         YtSearchElement[]
 }
 
 // =============================================================================
@@ -553,4 +561,90 @@ model CgSchemaUsage {
   @@index([projectId, pageId])
 }
 
+// =============================================================================
+// YouTube Search Observatory — Y1 Observation Floor
+//
+// Three-table minimum shape per y1-schema-judgment.md.
+// Search-first, observability-only. No read routes at Y1.
+//
+// Conservative deviation for first migration:
+//   YtSearchElement.channelId is nullable pending playlist verification pass.
+//   See y1-schema-judgment.md "Caution" note on youtube_playlist items.
+// =============================================================================
 
+// YtSearchTarget — Governance record defining what the project observes on YouTube search.
+// Equivalent to KeywordTarget in the existing SERP lane.
+model YtSearchTarget {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  projectId    String   @db.Uuid
+  project      Project  @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  query        String
+  locale       String
+  device       String
+  locationCode String
+  isPrimary    Boolean  @default(false)
+  notes        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  snapshots    YtSearchSnapshot[]
+
+  @@unique([projectId, query, locale, device, locationCode])
+  @@index([projectId])
+}
+
+// YtSearchSnapshot — Immutable observation record. One row per capture event.
+// Equivalent to SERPSnapshot in the existing SERP lane.
+model YtSearchSnapshot {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  projectId        String   @db.Uuid
+  project          Project  @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  ytSearchTargetId String   @db.Uuid
+  ytSearchTarget   YtSearchTarget @relation(fields: [ytSearchTargetId], references: [id], onDelete: Restrict)
+  capturedAt       DateTime
+  validAt          DateTime?
+  checkUrl         String?
+  itemsCount       Int
+  itemTypes        String[]
+  rawPayload       Json
+  source           String   @default("dataforseo-youtube-organic")
+  createdAt        DateTime @default(now())
+
+  elements         YtSearchElement[]
+
+  @@unique([projectId, ytSearchTargetId, capturedAt])
+  @@index([projectId, ytSearchTargetId, capturedAt])
+  @@index([projectId])
+}
+
+// YtSearchElement — Per-item observation row within a snapshot.
+// Promoted fields extracted from each item in the payload's items[] array.
+//
+// channelId is nullable in this first migration as a conservative choice
+// pending the playlist verification pass. See y1-schema-judgment.md.
+model YtSearchElement {
+  id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  snapshotId          String    @db.Uuid
+  snapshot            YtSearchSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+  projectId           String    @db.Uuid
+  project             Project   @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  elementType         String
+  rankAbsolute        Int
+  rankGroup           Int
+  blockRank           Int
+  blockName           String?
+  channelId           String?
+  videoId             String?
+  isShort             Boolean?
+  isLive              Boolean?
+  isMovie             Boolean?
+  isVerified          Boolean?
+  observedPublishedAt DateTime?
+  rawPayload          Json
+  createdAt           DateTime  @default(now())
+
+  @@unique([snapshotId, rankAbsolute])
+  @@index([projectId, channelId])
+  @@index([projectId, videoId])
+  @@index([snapshotId])
+}
