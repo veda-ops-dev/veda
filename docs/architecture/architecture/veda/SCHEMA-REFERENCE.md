@@ -30,14 +30,15 @@ It does not model production workflows, owned drafts, publishing state for owned
 
 ## Schema Domains
 
-The current VEDA schema is organized into six major domains.
+The current VEDA schema is organized into seven major domains.
 
 1. Project scoping
 2. Source and capture
 3. Event logging
 4. Search intelligence
-5. System configuration
-6. Content graph
+5. YouTube search observatory
+6. System configuration
+7. Content graph
 
 ---
 
@@ -159,7 +160,48 @@ This table should remain observation-first rather than becoming a content planni
 
 ---
 
-## 5. System Configuration
+## 5. YouTube Search Observatory
+
+Three-table observation floor for YouTube search results. Search-first, observability-only. Grounded by `docs/systems/veda/youtube-observatory/y1-schema-judgment.md`.
+
+### `YtSearchTarget`
+
+Represents a governed decision to observe a YouTube search query within a specific locale/device/location scope.
+
+Key ideas:
+- equivalent to `KeywordTarget` for the YouTube lane
+- unique within project + query + locale + device + locationCode
+- `locationCode` is in the uniqueness key because YouTube results vary by location
+- separate from `KeywordTarget` — they may share query strings across lanes
+
+### `YtSearchSnapshot`
+
+Represents an immutable YouTube search observation at a specific capture time.
+
+Key ideas:
+- observation record, not planning record
+- project-scoped, linked to a `YtSearchTarget`
+- stores full `result[0]` envelope as `rawPayload` for evidence/replay
+- stores promoted snapshot-level fields: `capturedAt`, `validAt`, `checkUrl`, `itemsCount`, `itemTypes`
+- idempotency: 60-second recent-window gate prevents duplicate snapshots
+- source defaults to `dataforseo-youtube-organic`
+
+### `YtSearchElement`
+
+Represents a single item within a YouTube search snapshot, with promoted fields.
+
+Key ideas:
+- per-item observation row within a snapshot
+- promotes identity fields (`channelId`, `videoId`) and rank fields to explicit columns
+- `channelId` is nullable — some playlist items (radio/mix-style) lack channel identity
+- `elementType` is a plain string, not a Prisma enum, to tolerate new vendor types
+- `projectId` is denormalized for efficient project-scoped element queries
+- stores full individual item as `rawPayload` for evidence
+- boolean flags (`isShort`, `isLive`, `isMovie`, `isVerified`) are type-specific and nullable
+
+---
+
+## 6. System Configuration
 
 ### `SystemConfig`
 
@@ -175,7 +217,7 @@ It is not a substitute for arbitrary application state storage.
 
 ---
 
-## 6. Content Graph
+## 7. Content Graph
 
 The Content Graph models the observed structural state of external content surfaces.
 
@@ -313,8 +355,8 @@ The current schema uses these enum families:
 - `CapturedBy`
 
 ### Event enums
-- `EntityType`
-- `EventType`
+- `EntityType` (includes `ytSearchTarget`, `ytSearchSnapshot`)
+- `EventType` (includes `YT_SEARCH_TARGET_CREATED`, `YT_SEARCH_SNAPSHOT_RECORDED`)
 - `ActorType`
 
 ### Content graph enums
@@ -385,6 +427,9 @@ Project
  ├─ KeywordTarget
  ├─ SERPSnapshot
  ├─ SearchPerformance
+ ├─ YtSearchTarget
+ │   └─ YtSearchSnapshot
+ │       └─ YtSearchElement
  ├─ CgSurface
  │   └─ CgSite
  │       └─ CgPage

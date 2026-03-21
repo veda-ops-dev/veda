@@ -128,15 +128,18 @@ Denormalized `projectId` on element rows avoids this.
 
 **Invariant:** `YtSearchElement.projectId` must always equal `YtSearchSnapshot.projectId` for the parent snapshot. This is enforced by the ingest route writing both values from the same resolved project context in a single transaction. A DB trigger may additionally enforce this if defense-in-depth is desired.
 
-### Why `channelId` is NOT NULL on elements
+### Why `channelId` remains nullable on elements at Y1
 
-Live payload evidence confirms `channel_id` is a direct UC-prefixed field on every item type (`youtube_video` and `youtube_channel`). No null values were observed across 20 items.
+Live payload evidence confirms `channel_id` is a direct UC-prefixed field on `youtube_video` and `youtube_channel` items.
 
-If a future payload returns an item without `channel_id`, the normalizer must handle it explicitly — either reject the item or store it with a sentinel value. This is a normalizer-level decision, not a schema-level nullable column.
+The playlist-heavy verification pass also confirmed that normal playlist results often carry `channel_id`, but some real `youtube_playlist` results do not. In the live `lofi playlist` pass, 4 of 5 playlist items carried `channel_id`, while 1 radio/mix-style playlist result (`playlist_id` beginning with `RD`) returned `channel_id = null` along with null `channel_name` and `channel_url`.
 
-**Caution:** `youtube_playlist` items have not been live-verified. If playlist items lack `channel_id`, this column must be made nullable in the migration. The de-risking query pass should confirm this before or alongside migration.
+That means `channelId` cannot be safely modeled as NOT NULL at Y1 without rejecting real playlist observations. The correct Y1 posture is:
+- `channelId` remains nullable on `YtSearchElement`
+- normal playlist items should populate it when present
+- radio/mix-style playlist results may legitimately store null `channelId`
 
-**Implementation note (first migration):** The first Y1 migration implements `channelId` as nullable (`String?`) as a conservative choice, since the playlist verification pass has not yet been completed. The NOT NULL recommendation above remains the target state; the column should be tightened to NOT NULL after playlist items are live-verified and confirmed to carry `channel_id`. This is the only intentional schema deviation from this document in the first implementation pass.
+This is no longer just a temporary conservative deviation. It is the schema truth supported by live playlist payload evidence.
 
 ### Why `elementType` is a plain String, not an enum
 
@@ -280,6 +283,7 @@ YtSearchSnapshot
 ## Document Notes
 
 - This schema is grounded against the confirmed hot fields table in `Y1-STEP1-INSPECTION-REPORT.md`, section 5.
-- `youtube_playlist` field shape is not yet live-verified. The `channelId` NOT NULL decision carries low risk but should be confirmed by the playlist de-risking query pass. If playlist items lack `channel_id`, make the column nullable before migration.
+- Live playlist verification confirmed that some `youtube_playlist` items lack `channel_id` (notably radio/mix-style `RD...` playlist results). `channelId` therefore remains nullable at Y1 by design, not as a temporary migration-only caution.
 - No read routes are defined here. The observation floor must prove itself through the hammer before read surfaces are designed.
 - This document does not authorize schema changes by itself. The migration must be reviewed and accepted before execution.
+

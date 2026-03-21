@@ -15,12 +15,15 @@ If this note and the live payload inspection report (`Y1-STEP1-INSPECTION-REPORT
 ## Evidence Base
 
 - Live DataForSEO YouTube Organic SERP payload — keyword `weather forecast`, location_code 2840, language_code `en`, device `desktop`, `block_depth=20`, captured `2026-03-19 02:31:25 +00:00`
+- Live DataForSEO YouTube Organic SERP payload — keyword `lofi playlist`, same baseline parameters (playlist verification pass)
 - DataForSEO YouTube Organic SERP API documentation (fetched from `docs.dataforseo.com/v3/serp/youtube/organic/live/advanced/`)
 - DataForSEO official blog post response sample (`midnights review`, December 2022)
 - `Y1-RESEARCH-BRIEF.md` — the five research buckets and their questions
 - `Y1-STEP1-INSPECTION-REPORT.md` — the full field-level analysis of the live payload
 
-The live payload contained 20 items: 19 `youtube_video` and 1 `youtube_channel`. No playlists and no paid items appeared in this sample.
+The `weather forecast` payload contained 20 items: 19 `youtube_video` and 1 `youtube_channel`. No playlists and no paid items appeared in that sample.
+
+The `lofi playlist` payload contained 20 items including 5 `youtube_playlist` items.
 
 ---
 
@@ -48,7 +51,7 @@ The complete confirmed type vocabulary from documentation and live evidence:
 - `youtube_video` — organic video results, including live streams and Shorts (distinguished by boolean flags)
 - `youtube_video_paid` — promoted video results, same field schema as `youtube_video`
 - `youtube_channel` — channel result items
-- `youtube_playlist` — playlist result items
+- `youtube_playlist` — playlist result items (live-verified in playlist pass)
 
 No other type strings exist in the documented API. Shorts are `youtube_video` items with `is_shorts: true`, not a separate type.
 
@@ -64,9 +67,11 @@ In the live payload, `block_name` was `null` on every item. Named shelves may ap
 
 ### Channel identity
 
-This was the highest-risk unknown in the research brief. It is now closed.
+This was the highest-risk unknown in the research brief. It is now closed, with a nullable caveat for playlists.
 
-**`channel_id` is a direct field on every item, carrying the UC-prefixed YouTube channel ID** (`UC` + 22 base64url characters). It appeared on all 19 `youtube_video` items and on the 1 `youtube_channel` item. No nulls were observed.
+**`channel_id` is a direct field on every `youtube_video` and `youtube_channel` item**, carrying the UC-prefixed YouTube channel ID (`UC` + 22 base64url characters). No nulls were observed on video or channel items.
+
+**`channel_id` is NOT guaranteed on `youtube_playlist` items.** The playlist verification pass confirmed that most playlist items (4 of 5) carry `channel_id`, but radio/mix-style auto-generated playlists (`playlist_id` beginning with `RD`) return `channel_id = null` along with null `channel_name` and `channel_url`. These are real YouTube results, not malformed payloads.
 
 **`channel_url` uses `@handle` format** (e.g., `https://www.youtube.com/@Foxweather`). This is not the canonical identity field. The canonical identity is always `channel_id`.
 
@@ -78,15 +83,19 @@ The normalizer reads `channel_id` directly. No URL parsing is required for the p
 
 The item `url` field contains tracking query parameters (`&pp=`, `&t=`) and must not be used as an identifier or for deduplication. The clean canonical video reference is `video_id`.
 
+### Playlist identity
+
+**`playlist_id` is a direct field on every `youtube_playlist` item.** This was confirmed in the playlist verification pass. Standard playlists carry normal `PL`-prefixed IDs. Radio/mix-style playlists carry `RD`-prefixed IDs.
+
 ### Freshness
 
-Two fields exist on `youtube_video` items. Neither appears on `youtube_channel` items.
+Two fields exist on `youtube_video` items. Neither appears on `youtube_channel` or `youtube_playlist` items.
 
 **`timestamp`** — absolute UTC datetime string (`"2026-03-17 02:31:25 +00:00"`). Parseable. But it is computed by DataForSEO by subtracting the relative label from the capture datetime, not sourced from YouTube's own metadata. Day-level accuracy only for videos older than ~24 hours — the time component mirrors the capture time for those items.
 
 **`publication_date`** — relative display string (`"3 days ago"`, `"22 hours ago"`, `"Streamed 2 days ago"`). Human-readable only. Not machine-parseable without heuristics. Store for audit/display. Do not use as a canonical date.
 
-For Y1 purposes: `timestamp` is the promoted freshness field, stored as `publishedAt`. Its computed/approximate nature must be documented. `publication_date` stays in `rawPayload`.
+For Y1 purposes: `timestamp` is the promoted freshness field, stored as `observedPublishedAt`. Its computed/approximate nature must be documented. `publication_date` stays in `rawPayload`.
 
 ### Field schema differences between item types
 
@@ -113,19 +122,16 @@ All three boolean flags confirmed present on every `youtube_video` item:
 
 ## What Remains Unverified
 
-These are de-risking passes. They are not structural blockers for schema design.
+These are optional de-risking passes. They are not blockers.
 
-**1. `youtube_playlist` item shape and `playlist_id` delivery**
-No playlist items appeared in the `weather forecast` payload. A query likely to return playlists (e.g., `beginner guitar lessons playlist`) should be run to confirm: whether `playlist_id` is a direct field, the exact field schema for playlist items, and whether `channel_id` is present on playlist items as expected.
+**1. `is_shorts: true` item completeness**
+No Shorts items appeared in the `weather forecast` payload (`is_shorts: false` on all 19 video items). A Shorts-heavy query should be run to confirm that `is_shorts: true` items are structurally complete and that no fields are absent for Shorts vs standard video items. Low risk — the `is_shorts` field is already confirmed present.
 
-**2. `is_shorts: true` item completeness**
-No Shorts items appeared in this payload (`is_shorts: false` on all 19 video items). A Shorts-heavy query should be run to confirm that `is_shorts: true` items are structurally complete and that no fields are absent for Shorts vs standard video items.
+**2. `block_name` with non-null values**
+All `block_name` fields were null in both payloads. A query known to produce named shelves would confirm what block_name values look like in practice.
 
-**3. `block_name` with non-null values**
-All `block_name` fields were null in this payload. A query known to produce named shelves (e.g., a branded channel query or a query that reliably produces "People also watched") would confirm what block_name values look like in practice and how stable they are.
-
-**4. Result-set variance across repeated captures**
-A single snapshot does not characterize how much the result set changes between captures of the same query. Running the same query at 24-hour intervals and computing Jaccard overlap would establish how stable the observation surface is. This affects how hammer tests for the observation floor should be written.
+**3. Result-set variance across repeated captures**
+A single snapshot does not characterize how much the result set changes between captures of the same query. Optional.
 
 ---
 
@@ -133,34 +139,30 @@ A single snapshot does not characterize how much the result set changes between 
 
 The confirmed payload evidence supports the following for Y1 design:
 
-**Channel-first identity is realizable at the ingest boundary.** `channel_id` is always present as a direct field. No enrichment, no URL parsing, no API call required to populate it.
+**Channel-first identity is realizable at the ingest boundary for video and channel items.** `channel_id` is always present as a direct field on those types. No enrichment, no URL parsing, no API call required.
+
+**Playlist items may lack channel identity.** Radio/mix-style auto-generated playlists have no owning channel and return null `channel_id`. The schema must allow nullable `channelId` on element rows.
 
 **Video identity is clean.** `video_id` is a direct field. The `url` field is not suitable for deduplication.
 
+**Playlist identity is clean.** `playlist_id` is a direct field on playlist items.
+
 **Freshness is partially available at ingest time.** `timestamp` provides a computed absolute date suitable for freshness-related read surfaces, with the documented limitation that it is an approximation for videos older than ~24 hours.
 
-**The normalizer must be type-aware.** `youtube_video` and `youtube_channel` use different field names for the same concepts. A shared accessor pattern will fail. The normalizer must branch on `type` before extracting any fields.
+**The normalizer must be type-aware.** `youtube_video` and `youtube_channel` use different field names for the same concepts. `youtube_playlist` has its own field shape. A shared accessor pattern will fail. The normalizer must branch on `type` before extracting any fields.
 
-**`rawPayload` should store the complete item.** Fields not promoted to explicit columns — `title`, `description`, `thumbnail_url`, `channel_url`, `url`, `channel_logo`, `highlighted`, `badges`, `views_count`, `duration_time`, `publication_date`, `channel_name` / `name` — belong in `rawPayload`. Display names (`channel_name`, `name`) are mutable and must not serve as identity.
-
-**`youtube_playlist` and Shorts-heavy items are confirmed item types but not live-verified from this payload.** Schema design can proceed now; the pending de-risking passes validate the existing design rather than gate it.
+**`rawPayload` should store the complete item.** Fields not promoted to explicit columns belong in `rawPayload`. Display names (`channel_name`, `name`) are mutable and must not serve as identity.
 
 ---
 
 ## Recommended Next Step
 
-Schema and route judgment for Y1 can now proceed.
-
-The payload evidence is sufficient to design the Y1 observation floor: a target-definition table, a snapshot table, and a search-element table. The field inventory above determines which fields are promoted columns and which stay in `rawPayload`.
-
-Before or alongside schema design, run the two higher-priority de-risking passes: a playlist-returning query and a Shorts-returning query. These validate the design rather than block it.
-
-Any schema or route work must still satisfy current VEDA invariants: project isolation, atomic writes with EventLog, deterministic ordering, hammer-testable behavior, no schema changes without explicit justification, no new routes without explicit justification.
+Y1 observation floor is implemented and hammer-validated. Next priorities are read routes for the YouTube observation data, followed by batch ingest capability.
 
 ---
 
 ## Document Notes
 
-- Evidence basis: live DataForSEO payload provided 2026-03-19
+- Evidence basis: live DataForSEO payloads — `weather forecast` (2026-03-19), `lofi playlist` (playlist verification pass)
 - Stored alongside: `Y1-RESEARCH-BRIEF.md`, `Y1-STEP1-INSPECTION-REPORT.md`
 - Authority: subordinate to `overview.md`, `observatory-model.md`, `ingest-discipline.md`, `validation-doctrine.md`, and the full authority chain in the research brief

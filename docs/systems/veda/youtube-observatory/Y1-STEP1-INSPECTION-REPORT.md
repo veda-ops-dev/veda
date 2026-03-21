@@ -45,6 +45,8 @@ This pass used a single query (`weather forecast`) from the DataForSEO sample cu
 | `excel vlookup tutorial` | Instructional | Pending |
 | `javascript promises explained` | Technical instructional | Pending |
 
+A separate playlist-heavy verification pass was run using `lofi playlist` — see section 9.
+
 The critical research questions (channel identity format, video identity, freshness fields, type vocabulary) are all closeable from this single payload.
 
 ---
@@ -102,6 +104,8 @@ Real examples from the payload:
 - `channel_id: "UCkH1uDkyuO9sVjSqdqBygOg"` / `channel_url: "https://www.youtube.com/@CBSLA"`
 
 **Conclusion:** Channel-first identity is fully realizable at the ingest boundary. The normalizer reads `channel_id` directly. `channel_url` is metadata only — store it but never use it as the identity anchor.
+
+**Update (playlist pass):** The playlist verification pass (section 9) confirmed that `channel_id` is NOT guaranteed on all item types. Some radio/mix-style `youtube_playlist` results return `channel_id = null`. See section 9 for details.
 
 ### 4.5 Video Identity — RESOLVED
 
@@ -190,7 +194,7 @@ Fields confirmed as reliable and consistent enough to promote to explicit column
 | `rank_group` | `rankGroup` | integer | all items | CONFIRMED — present on every item |
 | `block_rank` | `blockRank` | integer | all items | CONFIRMED — present on every item |
 | `block_name` | `blockName` | string\|null | all items | CONFIRMED present — but `null` in this payload; store for future |
-| `channel_id` | `channelId` | string | all items | CONFIRMED — direct UC... field on every item |
+| `channel_id` | `channelId` | string\|null | all items | CONFIRMED on video/channel items; **nullable** — some playlist items lack it (see section 9) |
 | `video_id` | `videoId` | string | youtube_video only | CONFIRMED — direct 11-char field |
 | `is_shorts` | `isShort` | boolean | youtube_video only | CONFIRMED — present on every video item |
 | `is_live` | `isLive` | boolean | youtube_video only | CONFIRMED — present on every video item |
@@ -221,8 +225,8 @@ The channel item shows `video_count: 0` for a clearly active channel. This field
 **4. `block_rank` starts at 2, not 1.**
 Block_rank 1 is absent in this 20-item payload. This is likely a structural artifact (block_rank 1 = reserved above-fold position). Normalizer and schema must not assume block_rank starts at 1.
 
-**5. Pending query types: Shorts, playlists, branded entity.**
-This single query returns no Shorts (`is_shorts: false` everywhere), no playlists, no `youtube_video_paid`. The field inventory for those types is doc-confirmed but not live-confirmed from this specific payload. Low risk for `is_shorts` and `is_movie` (field confirmed present), but `youtube_playlist` field structure needs a live playlist-returning query to confirm `playlist_id` delivery.
+**5. Pending query types: Shorts, branded entity.**
+Playlists are now live-verified (see section 9). This query returns no Shorts (`is_shorts: false` everywhere) and no `youtube_video_paid`. The field inventory for Shorts is doc-confirmed but not live-confirmed. Low risk — `is_shorts` field is already confirmed present on all video items.
 
 **6. `url` field contains tracking params.**
 Item URLs include `&pp=` query params. These cannot be used as canonical identifiers or for URL-based deduplication. Only `video_id` and `channel_id` are clean canonical identifiers.
@@ -233,11 +237,11 @@ Item URLs include `&pp=` query params. These cannot be used as canonical identif
 
 ### What This Inspection Resolves
 
-**Bucket 1 (Truth-Surface) — RESOLVED for video + channel types.**
-The payload structure is confirmed: flat `items[]`, four fields per item for ranking, result-level metadata for capture time and check_url. Field presence is confirmed for `youtube_video` and `youtube_channel` types. Pending: `youtube_playlist` and `youtube_video_paid` confirmation from live queries.
+**Bucket 1 (Truth-Surface) — RESOLVED for video + channel + playlist types.**
+The payload structure is confirmed: flat `items[]`, four fields per item for ranking, result-level metadata for capture time and check_url. Field presence is confirmed for `youtube_video` and `youtube_channel` types from this payload, and for `youtube_playlist` from the playlist verification pass (section 9).
 
 **Bucket 2 (Identity Extraction) — RESOLVED.**
-Channel identity: `channel_id` direct field, UC-prefixed, present on every item. No extraction needed. Video identity: `video_id` direct field, 11-char, present on every video item. No URL extraction required as primary path (URL contains tracking params anyway). The identity normalization spec from legacy salvage assumed URL extraction as fallback — it is correct as a fallback, but the primary path is the direct field.
+Channel identity: `channel_id` direct field, UC-prefixed, present on every video and channel item. No extraction needed. Video identity: `video_id` direct field, 11-char, present on every video item. Playlist identity: `playlist_id` is a direct field on playlist items. Note: `channel_id` is NOT guaranteed on all playlist items — radio/mix-style results may have null channel identity (see section 9).
 
 **Bucket 4 (Freshness) — RESOLVED.**
 Two fields confirmed: `timestamp` (computed absolute, promotable) and `publication_date` (raw relative string, rawPayload only). `publishedAt` should map from `timestamp`. The computed nature is a documented limitation, not a blocker.
@@ -250,12 +254,10 @@ Subscriber count is not in the payload (`video_count: 0` on the channel item is 
 
 ### What Still Needs Research
 
-1. Live payload for a query that returns `youtube_playlist` — to confirm `playlist_id` field delivery and `youtube_playlist` schema.
-2. Live payload for a Shorts-heavy query — to confirm `is_shorts: true` items and their field completeness.
-3. Live payload for a branded entity query — to confirm whether `youtube_channel` items appear differently and whether `block_name` is populated for known-channel queries.
-4. Variance baseline (Bucket 3) — same query repeated at 24h to characterize result-set stability.
-
-These are de-risking passes, not blockers. Schema design for Y1 can proceed now.
+1. ~~Live payload for a query that returns `youtube_playlist`.~~ **RESOLVED** — playlist verification pass completed. See section 9.
+2. Live payload for a Shorts-heavy query — to confirm `is_shorts: true` items and their field completeness. Recommended but not blocking.
+3. Live payload for a branded entity query — to confirm whether `youtube_channel` items appear differently and whether `block_name` is populated for known-channel queries. Optional.
+4. Variance baseline (Bucket 3) — same query repeated at 24h to characterize result-set stability. Optional.
 
 ---
 
@@ -263,6 +265,37 @@ These are de-risking passes, not blockers. Schema design for Y1 can proceed now.
 
 - **This report (updated):** `docs/systems/veda/youtube-observatory/Y1-STEP1-INSPECTION-REPORT.md`
 - **Inspection script (ready for remaining queries):** `scripts/yt-payload-inspect.mjs`
+
+---
+
+## 9. Playlist Verification Pass
+
+### Evidence
+
+A playlist-heavy query (`lofi playlist`) was run against DataForSEO YouTube Organic SERP with the same baseline parameters (en-US, desktop, location_code 2840).
+
+Results: 20 total items, including 5 `youtube_playlist` items.
+
+### Confirmed
+
+- `playlist_id` is a direct field on every `youtube_playlist` item.
+- `channel_id` is present on 4 of 5 playlist items (UC-prefixed, same format as video/channel items).
+- Rank fields (`rank_absolute`, `rank_group`, `block_rank`) are present on all playlist items.
+
+### Null channel identity case
+
+1 of 5 playlist items returned with null channel identity fields:
+- `type`: `youtube_playlist`
+- `playlist_id`: begins with `RD` (radio/mix-style auto-generated playlist)
+- `channel_id`: `null`
+- `channel_name`: `null`
+- `channel_url`: `null`
+
+This is a real playlist result from YouTube, not a malformed payload. Radio/mix-style playlists are auto-generated by YouTube and have no owning channel.
+
+### Schema implication
+
+`channelId` must remain nullable on `YtSearchElement` at Y1. This is not a temporary conservative deviation — it is the correct schema truth supported by live payload evidence. The normalizer correctly stores null `channelId` for these items.
 
 ---
 

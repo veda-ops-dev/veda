@@ -13,55 +13,55 @@ It is not a roadmap phase. It is subordinate to `docs/ROADMAP.md` as an optional
 
 ### Step 1: Schema judgment acceptance
 - **Artifact:** `y1-schema-judgment.md`
-- **Status:** COMPLETE — written and ready for operator review
-- **Gate:** Operator accepts the three-table shape, column decisions, uniqueness keys, and EventLog integration before migration.
+- **Status:** COMPLETE
+- **Gate:** Operator accepted the three-table shape, column decisions, uniqueness keys, and EventLog integration.
 
 ### Step 2: Hammer story acceptance
 - **Artifact:** `y1-hammer-story.md`
-- **Status:** COMPLETE — written and ready for operator review
-- **Gate:** Operator accepts the test cases and SKIP policy before route implementation.
+- **Status:** COMPLETE
+- **Gate:** Operator accepted the test cases and SKIP policy.
 
 ### Step 3: De-risking query passes
-- **Status:** PENDING
-- Run at least one playlist-returning query and one Shorts-returning query against DataForSEO YouTube Organic SERP.
-- Confirm: `youtube_playlist` field shape, `playlist_id` delivery, `channel_id` presence on playlist items, `is_shorts: true` item completeness.
-- If playlist items lack `channel_id`, update `y1-schema-judgment.md` to make `channelId` nullable before migration.
-- Non-blocking for steps 1–2. Should complete before or alongside step 4.
+- **Status:** PARTIALLY COMPLETE
+- **Playlist-heavy pass:** COMPLETE. Query `lofi playlist` confirmed `youtube_playlist` field shape, direct `playlist_id` delivery, and that some playlist items (radio/mix-style, `RD`-prefixed) lack `channel_id`. Result: `channelId` remains nullable on `YtSearchElement` at Y1 by design.
+- **Shorts-heavy pass:** RECOMMENDED but not blocking. `is_shorts` field is already confirmed present on all video items. A Shorts-heavy query would confirm structural completeness for `is_shorts: true` items.
+- **Variance check:** OPTIONAL. Not blocking for Y1 observation floor.
 
 ### Step 4: Prisma migration
-- **Status:** PENDING
-- Add `YtSearchTarget`, `YtSearchSnapshot`, `YtSearchElement` models to `prisma/schema.prisma`.
-- Extend `EntityType` enum with `ytSearchTarget`, `ytSearchSnapshot`.
-- Extend `EventType` enum with `YT_SEARCH_TARGET_CREATED`, `YT_SEARCH_SNAPSHOT_RECORDED`.
-- Add reverse relations on `Project` model.
-- Run migration. Verify clean build.
+- **Status:** COMPLETE
+- Added `YtSearchTarget`, `YtSearchSnapshot`, `YtSearchElement` models to `prisma/schema.prisma`.
+- Extended `EntityType` enum with `ytSearchTarget`, `ytSearchSnapshot`.
+- Extended `EventType` enum with `YT_SEARCH_TARGET_CREATED`, `YT_SEARCH_SNAPSHOT_RECORDED`.
+- Added reverse relations on `Project` model.
+- Migration applied. Build passes.
 
 ### Step 5: Pure normalizer library
-- **Status:** PENDING
-- Create `src/lib/seo/youtube/normalize-yt-search.ts`.
+- **Status:** COMPLETE
+- Created `src/lib/seo/youtube/normalize-yt-search.ts`.
 - Pure function. No I/O. No Date.now(). No randomness.
-- Branch on `type`. Extract promoted fields. Preserve rawPayload per item.
-- Handle unrecognized types gracefully (store with rank fields, null identity).
+- Branches on `type`. Extracts promoted fields. Preserves rawPayload per item.
+- Handles unrecognized types gracefully (stores with rank fields, null identity).
+- Atomic rejection: throws on any item missing `type` or `rank_absolute`.
 
 ### Step 6: Ingest route
-- **Status:** PENDING
-- Create `src/app/api/seo/youtube/search/ingest/route.ts`.
-- Thin handler: resolve project strictly, validate with Zod `.strict()`, delegate to normalizer, atomic write with EventLog.
+- **Status:** COMPLETE
+- Created `src/app/api/seo/youtube/search/ingest/route.ts`.
+- Thin handler: resolves project strictly, validates with Zod `.strict()`, delegates to normalizer, atomic write with EventLog.
 - Idempotency: 60-second recent-window gate.
 - Find-or-create target behavior with conditional EventLog.
 
 ### Step 7: Hammer module
-- **Status:** PENDING
-- Create `scripts/hammer/hammer-youtube-y1.ps1`.
-- Register in `scripts/api-hammer.ps1` (parse-check and run sections).
-- Implement all test cases from `y1-hammer-story.md`.
-- Run full coordinator. Confirm no regressions.
+- **Status:** COMPLETE
+- Created `scripts/hammer/hammer-youtube-y1.ps1`.
+- Registered in `scripts/api-hammer.ps1` (parse-check and run sections).
+- Implements test cases from `y1-hammer-story.md`.
+- Full coordinator run: **705 PASS / 0 FAIL / 11 SKIP**.
 
 ### Step 8: Docs cleanup / control-surface update
-- **Status:** PENDING
+- **Status:** IN PROGRESS
 - Update `docs/architecture/architecture/veda/SCHEMA-REFERENCE.md` with the three new tables.
-- Update `docs/DOCS-CLEANUP-TRACKER.md` and `docs/DOCS-CLEANUP-GROUNDED-IDEAS-EXTRACTION.md`.
-- Confirm `docs/ROADMAP.md` note is still accurate.
+- Propagate playlist verification finding into YouTube docs.
+- Update `docs/DOCS-CLEANUP-TRACKER.md`.
 
 ---
 
@@ -69,11 +69,11 @@ It is not a roadmap phase. It is subordinate to `docs/ROADMAP.md` as an optional
 
 Y1 observation floor is done when:
 
-1. Migration applied cleanly. Build passes.
-2. Hammer module passes all non-SKIP cases.
-3. Full coordinator run shows no regressions from current baseline (680 PASS / 0 FAIL / 10 SKIP + new Y1 cases).
-4. Schema reference doc updated.
-5. Cleanup layer updated.
+1. ✅ Migration applied cleanly. Build passes.
+2. ✅ Hammer module passes all non-SKIP cases.
+3. ✅ Full coordinator run shows no regressions (705 PASS / 0 FAIL / 11 SKIP).
+4. ⬜ Schema reference doc updated.
+5. ⬜ Cleanup layer updated.
 
 ---
 

@@ -1727,9 +1727,9 @@ They do not authorize publishing, planning, creator workflow, or execution owner
 - Item `url` fields contain tracking params and must not be used as identifiers
 - Video Info, Video Subtitles, and Video Comments endpoints are not Y1 surfaces
 
-### Still unverified
-- `youtube_playlist` item field shape and `playlist_id` delivery
-- `is_shorts: true` item field completeness
+### Still unverified (updated after playlist pass)
+- ~~`youtube_playlist` item field shape and `playlist_id` delivery~~ — **RESOLVED.** Playlist verification pass confirmed: `playlist_id` is a direct field; `channel_id` is present on most playlist items but null on radio/mix-style `RD`-prefixed results.
+- `is_shorts: true` item field completeness — recommended but not blocking
 - `block_name` with non-null values
 - Result-set variance across repeated captures of the same query
 
@@ -1761,7 +1761,7 @@ New docs created:
 - `observedPublishedAt` is the safer field name for the computed vendor timestamp, documenting its approximate nature
 - `elementType` is a plain string, not a Prisma enum, to avoid migration churn when the vendor adds new type strings
 - Empty result sets are valid observations ("YouTube returned no results for this query") and should produce a snapshot with zero elements
-- `channelId` NOT NULL on elements is supported by payload evidence but carries a low-risk caveat for unverified `youtube_playlist` items
+- `channelId` nullable on elements is now confirmed by live playlist evidence — radio/mix-style playlist results return null `channel_id`; this is schema truth, not a temporary migration caveat
 
 ### Ideas explicitly rejected
 - Creating a new numbered roadmap phase for YouTube
@@ -1774,8 +1774,7 @@ New docs created:
 - Using a Prisma enum for element type (would require migration for each new vendor type)
 
 ### Active direction
-- Use the three implementation-decision docs as the active coding authority for Y1
-- Run de-risking query passes (playlist, Shorts) before or alongside migration to confirm channelId nullable decision
-- Implement in the sequence defined by `y1-implementation-plan.md`
-- Update SCHEMA-REFERENCE.md after migration is applied
-- No read routes until the observation floor passes the hammer
+- Y1 observation floor is implemented and hammer-validated (705 PASS / 0 FAIL / 11 SKIP)
+- Playlist verification pass complete — `channelId` confirmed nullable by design
+- SCHEMA-REFERENCE.md updated with YouTube Search Observatory section
+- Next priorities: read routes for YouTube observation data, then batch ingest capability

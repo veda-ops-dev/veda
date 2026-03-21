@@ -250,3 +250,28 @@ These rules are part of the VEDA system invariants and must be preserved across 
 - Placement rule followed: all new docs under `docs/systems/veda/youtube-observatory/` only
 - No application code written; no schema migration applied; no routes created
 - These are implementation-decision artifacts bridging doctrine/research to coding posture
+
+## YouTube observatory Y1 implementation complete
+
+- Y1 observation floor implemented: schema migration, pure normalizer, ingest route, hammer module
+- Full coordinator baseline: **705 PASS / 0 FAIL / 11 SKIP**
+- Schema adds: `YtSearchTarget`, `YtSearchSnapshot`, `YtSearchElement` + `EntityType` and `EventType` enum extensions + `Project` reverse relations
+- Route: `POST /api/seo/youtube/search/ingest` — thin handler, Zod `.strict()`, find-or-create target, 60s idempotency gate, atomic write with EventLog
+- Normalizer: `src/lib/seo/youtube/normalize-yt-search.ts` — pure, type-branching, atomic rejection on missing `rank_absolute` or `type`
+- Hammer: `scripts/hammer/hammer-youtube-y1.ps1` registered in both parse-check and run sections of `api-hammer.ps1`
+- `SCHEMA-REFERENCE.md` updated with YouTube Search Observatory section (domain 5)
+
+## YouTube Y1 playlist verification pass — truth-sync
+
+- Playlist-heavy verification pass completed: query `lofi playlist`, 20 items, 5 `youtube_playlist` items
+- `playlist_id` confirmed as a direct field on all playlist items
+- `channel_id` present on 4/5 playlist items; null on 1/5 (radio/mix-style, `RD`-prefixed `playlist_id`)
+- The null case is a real YouTube result (auto-generated radio/mix playlist with no owning channel), not a malformed payload
+- Schema implication: `channelId` remains nullable on `YtSearchElement` at Y1 — this is now confirmed schema truth, not temporary migration caution
+- Docs updated to reflect this finding:
+  - `y1-schema-judgment.md` — channelId section rewritten from "NOT NULL with caution" to "nullable by design"
+  - `Y1-STEP1-INSPECTION-REPORT.md` — section 9 added (Playlist Verification Pass); sections 5, 6.5, 7 updated
+  - `y1-payload-findings.md` — playlist findings added; unverified section narrowed; recommended next step updated
+  - `y1-implementation-plan.md` — step statuses updated to reflect completed implementation and playlist pass
+- Grounded ideas extraction update: `channelId` nullable caveat upgraded from "low-risk" to "confirmed by live evidence"
+- Working artifacts NOT committed: `scripts/yt-playlist-raw.json`, `scripts/yt-playlist-pass-results.json`, `scripts/yt-inspect.ps1`, `scripts/yt-payload-inspect.mjs`
